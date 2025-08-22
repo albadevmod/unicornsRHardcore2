@@ -1,0 +1,33 @@
+Create an ArrayList of Chapters, so that one Level can have multiple Chapters
+StateMachine (state)
+
+recursive funktionen
+
+Class = PascalCase
+Method = camelCase
+Variable = camelCase
+Constants = ALL_CAPS
+
+POJO
+POJO Plain Old Java Object
+// Student.java
+
+public class Student {
+  public String firstName;
+  public String lastName;
+  private String major;
+
+  public Student(String firstName, String lastName, String major) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.major = major;
+  }
+
+  public String name() {
+    return this.firstName + " " + this.lastName;
+  }
+
+  public String getMajor() {
+    return this.major;
+  }
+}

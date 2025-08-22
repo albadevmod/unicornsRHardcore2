@@ -1,0 +1,124 @@
+classDiagram
+    Loadout --> Weapon : equipped
+    Loadout --> Armor : equipped
+    Player --> Inventory : equipped
+    Inventory "1" --> "*" Item : has
+    Weapon -- DamageType : calls
+    Weapon <|--|> RangeWeapon : inherits
+    Weapon <|--|> MeleeWeapon : inherits
+    RangeWeapon <|--|> Grenadethrower : inherits
+    Armor -- Resistance : calls
+    Character -- Loadout  : equipped
+    EventHandler <-- Level
+    Chapter <-- Character : calls
+    Arena --|> Chapter: has
+    Level "1" --> "*" Chapter : has
+    Level -- GameState : calls
+    Player <|--|> Character : inherits
+
+    Character: +int health
+    Character: +int stamina
+    Character: +String npcname
+    Character: +String npcdialogue
+    Character: +boolean enemy
+    Character: +int reputationpoints
+    Character: +attack(Loadout)
+
+    class Player {
+        +String playername
+        +int reputation
+        inventory()
+        walk()
+        inspect()
+        take()
+        talk()
+        persuade()
+    }
+
+    class Loadout{
+        Weapon activeWeapon
+        Armor activeArmor
+    }
+
+    class Weapon{
+      +String weaponname
+      +int basedamage
+      DamageType damagetype
+      +setDamage(type)
+    }
+    class RangeWeapon{
+        +int range
+        +int projectiles
+    }
+    class Grenadethrower{
+        +int enemyradius
+    }
+    class MeleeWeapon{
+        +int staminaconsumption
+    }
+    class DamageType{
+        +int explosive
+        +int fire
+        +int blunt
+        +int slice
+        calculateDamage()
+    }
+    
+    class Armor{
+        +String armorname
+        Resistance value
+    }
+    class Resistance{
+        +int explosive
+        +int fire
+        +int blunt
+        +int slice
+        calculateResistance()
+    }
+
+    class Inventory{
+      +ArrayList Items
+      +use()
+      +inspect()
+      +combine()
+    }
+    
+    class Item{
+        +String itemname
+        +String itemdescription
+        +bool combination
+        itemEffect()
+    }
+
+    namespace Game{
+        class EventHandler{
+            Level activeLevel
+        }
+        class Level{
+            +String levelname
+            Chapter activeChapter
+            GameState state
+        }
+        class Arena{
+            +String name
+            +String combatText
+            +int enemynumbers
+            calculateEnemies()
+            calculateEnemyPower()
+            calculateTotalDamage()
+        }
+        class GameState{
+            +String explore
+            +String fight
+            +String win
+            +String gameOver
+            checkState()
+        }
+        class Chapter{
+            +String storytext
+            Character x
+            Character y
+            Item x
+            Item y
+        }
+    }
