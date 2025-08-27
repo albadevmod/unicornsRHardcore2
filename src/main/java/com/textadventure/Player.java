@@ -1,6 +1,8 @@
 package com.textadventure;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Player {
     //Scanner playerNameInput = new Scanner(System.in);
@@ -21,14 +23,6 @@ public class Player {
         this.stamina = 5;
     }
 
-    /*public void askForPlayerName(){
-        System.out.println("This is your first step into a strange adventure.");
-        System.out.println("What is your name?");
-
-        //playerName = playerNameInput.nextLine();
-        System.out.println("Good luck, " + playerName + ".");
-    }*/
-
     public void setPlayerName(String name) {
         this.playerName = name;
     }
@@ -37,6 +31,7 @@ public class Player {
         return playerName;
     }
 
+    // items & inventory
     public void addItemToInventory(Item item){
         inventory.add(item);
     }
@@ -49,14 +44,29 @@ public class Player {
         return inventory;
     }
 
+    public boolean hasItem(String itemName){
+        return inventory.contains(item);
+    }
+
     // Handle Map Logic
-    
      public boolean hasMapForLevel(Level level) {
         return discoveredMaps.contains(level);
     }
 
     public void discoverMap(Level level) {
         discoveredMaps.add(level);
+    }
+
+    // quest memory
+    private Set<String> seenEvents = new HashSet<>();
+
+    // Event memory
+    public void markSeen(String event) {
+        seenEvents.add(event);
+    }
+
+    public boolean hasSeen(String event) {
+        return seenEvents.contains(event);
     }
 
 

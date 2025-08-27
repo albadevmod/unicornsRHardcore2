@@ -4,21 +4,30 @@ import java.util.ArrayList;
 public class GameEventHandler {
 
     String inputString;
+    String lastAction;
     Player player;
     Chapter activeChapter;
     DialogueManager dialogueManager;
+    QuestTracker questTracker;
     Arena arena;
 
-    public GameEventHandler(Player player, Chapter activeChapter, DialogueManager dialogueManager, Arena arena){
+    public GameEventHandler(Player player, Chapter activeChapter, Arena arena){
         this.player = player;
         this.activeChapter = activeChapter;
-        this.dialogueManager = dialogueManager;
         this.arena = arena;
     }
+    
+    public void setDialogueManager(DialogueManager dialogueManager) {
+        this.dialogueManager = dialogueManager;
+    }
 
+    public void setQuestTracker(QuestTracker questTracker) {
+        this.questTracker = questTracker;
+    }
 
     // Method to process input from the player
     public String processInput (String inputString){
+        this.lastAction = inputString;
         StringBuilder response = new StringBuilder();
         inputString = inputString.toLowerCase();
 
@@ -53,10 +62,14 @@ public class GameEventHandler {
                     break;
                 }
             }
-            if (currentNPC != null){
+            if (currentNPC != null && currentNPC.npcQuests.size() > 0){
+                updateQuestsForNPC(currentNPC, response);
+                System.out.println("Quests updated for NPC: " + currentNPC.npcName);
+            }
+            else if (currentNPC != null){
                 response.append(dialogueManager.talkToNPC(currentNPC));
                 currentNPC = null;
-                System.out.println("Dialogue finished, NPC cleared.");
+                System.out.println("Normal dialogue cued.");
             } else {
                 response.append("This doesn't seem to be anybody's name here.");
             }
@@ -78,6 +91,10 @@ public class GameEventHandler {
             Level mapLevel = activeChapter.getAssociatedLevel();
             if (player.hasMapForLevel(mapLevel)) {
             response.append(activeChapter.chapterName + "\n");
+            }
+            if (questTracker != null) {
+                questTracker.updateQuests(response);
+                System.out.println("Quests updated, player moved.");
             }
             response.append(nextChapter.startChapter());
         }
@@ -170,6 +187,14 @@ public class GameEventHandler {
         response.append("-----------------------\n");
         response.append("Type 'inspect [itemName]' to inspect an item.");
         return response.toString();
+    }
+
+    // Update only quests associated with a specific NPC
+    public void updateQuestsForNPC(NPC npc, StringBuilder response) {
+        if (npc == null || npc.npcQuests == null) return;
+        for (Quest quest : npc.npcQuests) {
+            quest.update(response);
+        }
     }
     
 }

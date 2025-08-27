@@ -7,13 +7,13 @@ import java.util.Map;
 public class Book {
 
     Player player;
-    DialogueManager dialogueManager;
+    GameEventHandler gameEventHandler;
     QuestTracker questTracker;
 
-    public Book(Player player, QuestTracker questTracker, DialogueManager dialogueManager){
-        this.player = player;
+    public Book(GameEventHandler gameEventHandler, QuestTracker questTracker){
+        this.gameEventHandler = gameEventHandler;
+        this.player = gameEventHandler.player;
         this.questTracker = questTracker;
-        this.dialogueManager = dialogueManager;
         createBook();
     }
 
@@ -39,7 +39,7 @@ public class Book {
     public void createBook(){
 
         cottonCandyLand.addChaptersToList(Arrays.asList(sweetopolisCityGateSouth, cityOutskirtSouth, cityOutskirtSouthEast, cityOutskirtSouthWest, cityOutskirtEast, willowTreeForest));
-        questTracker.setFirstLevel(cottonCandyLand);
+        questTracker.setCurrentLevel(cottonCandyLand);
         cottonCandyLand.levelMap = candyLandMap;
         cityOutskirtSouth.setMapReward(cottonCandyLand);
 
@@ -61,8 +61,8 @@ public class Book {
         sweetopolisCityGateSouth.addStoryText("A guard is stationed at the gates. He is standing upright, walking on two hooves and has the head of a horse.");
 
         sweetopolisCityGateSouth.addNPCsToChapter(new ArrayList<NPC>(Arrays.asList(guard)));
-        dialogueManager.addBasicDialogue(guard, new ArrayList<>(Arrays.asList("NO HUMANS ALLOWED!", "get away, pescy human!", "don't bother me.")));
-        dialogueManager.inventoryDialogues.put(guard, Map.of(fish, "you stink!"));
+        gameEventHandler.dialogueManager.addBasicDialogue(guard, new ArrayList<>(Arrays.asList("NO HUMANS ALLOWED!", "get away, pescy human!", "don't bother me.")));
+        gameEventHandler.dialogueManager.addInventoryDialogue(guard, Map.of(fish, "you stink!"));
 
 
         /********************************************
@@ -77,10 +77,10 @@ public class Book {
 
         cityOutskirtSouthEast.addStoryText("Here, delicate strands of twisted cotton candy swirl and dance through the air, carried by a soft, whimsical breeze.");
         cityOutskirtSouthEast.addStoryText("It seems the wind is ferrying them in from the southeast.");
-        cityOutskirtSouthEast.addStoryText("You can see a fox peeking through the bushes.");
         cityOutskirtSouthEast.addNPCsToChapter(new ArrayList<NPC>(Arrays.asList(fox)));
-        dialogueManager.addBasicDialogue(fox, new ArrayList<>(Arrays.asList("It scurries away into the bushes when you try to get closer.", "You see its eyes gleaming within the dark bushes.")));
-        dialogueManager.inventoryDialogues.put(fox, Map.of(fish, "Hmm, you reek deliciously."));
+
+        gameEventHandler.dialogueManager.addBasicDialogue(fox, new ArrayList<>(Arrays.asList("It scurries away into the bushes when you try to get closer.", "You see its eyes gleaming within the dark bushes.")));
+        gameEventHandler.dialogueManager.addInventoryDialogue(fox, Map.of(fish, "Hmm, you reek deliciously."));
 
         cityOutskirtEast.addStoryText("A flurry of cotton candy strands dance through the air.");
         cityOutskirtEast.addStoryText("It seems the wind carries them from the forest stretching eastward.");
@@ -94,7 +94,6 @@ public class Book {
         cityOutskirtSouthWest.addStoryText("The textures are rich and irregular, giving them the appearance of an impenetrable fortress, albeit a sweet one.");
 
         questTracker.setupAllQuests();
-
         
     }
 }

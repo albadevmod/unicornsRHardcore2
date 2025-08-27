@@ -11,14 +11,15 @@ public class Game {
 
     public static String startGame(String playerName) {
         player = new Player(playerName);
-        dialogueManager = new DialogueManager(player);
-        gameEventHandler = new GameEventHandler(player, null, dialogueManager, arena);
+        gameEventHandler = new GameEventHandler(player, null, arena);
         questTracker = new QuestTracker(gameEventHandler);
-        book = new Book(player, questTracker, dialogueManager);
+        dialogueManager = new DialogueManager(gameEventHandler, questTracker);
+        gameEventHandler.setDialogueManager(dialogueManager);
+        book = new Book(gameEventHandler, questTracker);
 
         // Set activeChapter of gameEventHandler
         gameEventHandler.activeChapter = book.cottonCandyLand.initialChapter;
-        dialogueManager.questTracker = questTracker;
+        gameEventHandler.setQuestTracker(questTracker);
 
         StringBuilder introText = new StringBuilder();
 

@@ -6,49 +6,40 @@ import java.util.Map;
 
 public class DialogueManager {
     
-    Player player;
-    NPC currentNPC;
-    QuestTracker questTracker;
+    private final Player player;
+    private NPC currentNPC;
+    public QuestTracker questTracker;
+    public GameEventHandler gameEventHandler;
 
-    Map<NPC, List<String>> basicDialogues;
-    Map<NPC, Map<Item, String>> inventoryDialogues;
-    Map<NPC, Integer> currentDialogueIndex;
+    private final Map<NPC, List<String>> basicDialogues;
+    private final Map<NPC, Map<Item, String>> inventoryDialogues;
+    private final Map<NPC, Integer> currentDialogueIndex;
     // NPC → quest name → stage → dialogue
-    Map<NPC, Map<String, Map<Integer, String>>> questDialogues; 
+    private final Map<NPC, Map<String, Map<Integer, String>>> questDialogues; 
     
-    public DialogueManager(Player player) {
-        this.player = player;
+    public DialogueManager(GameEventHandler gameEventHandler, QuestTracker questTracker) {
+        this.gameEventHandler = gameEventHandler;
+        this.player = gameEventHandler.player;
+        this.questTracker = questTracker;
         this.questDialogues = new HashMap<>();
         this.basicDialogues = new HashMap<>();
         this.inventoryDialogues = new HashMap<>();
         this.currentDialogueIndex = new HashMap<>();
-        this.questTracker = questTracker;
     }
 
+    // ----------------------
+    // Quest dialogues
+    // ----------------------
     public void addQuestDialogue(NPC npc, String questName, Map<Integer, String> stageDialogues) {
         questDialogues.computeIfAbsent(npc, k -> new HashMap<>()).put(questName, stageDialogues);
     }
 
-    public String checkQuestDialogue(NPC npc) {
-        if (!questDialogues.containsKey(npc)) return null;
-
-        for (Map.Entry<String, Map<Integer, String>> questEntry : questDialogues.get(npc).entrySet()) {
-            String questName = questEntry.getKey();
-            int stage = questTracker.questManager.getQuestStage(questName);
-            Map<Integer, String> dialogues = questEntry.getValue();
-
-            if (dialogues.containsKey(stage)) {
-                return dialogues.get(stage);
-            }
-        }
-        return null;
-    }
-
+    // ----------------------
+    // Basic dialogues (rotating)
+    // ----------------------
     public void addBasicDialogue(NPC npc, List<String> dialogues) {
         basicDialogues.put(npc, dialogues);
         currentDialogueIndex.put(npc, 0);
-        System.out.println("Added dialogues for NPC " + npc.npcName);
-        System.out.println("Dialogues " + dialogues);
     }
 
     private String getBasicDialogue() {
@@ -63,6 +54,9 @@ public class DialogueManager {
         }
     }
 
+    // ----------------------
+    // Inventory dialogues
+    // ----------------------
     public void addInventoryDialogue(NPC npc, Map<Item, String> dialogues){
         inventoryDialogues.put(npc, dialogues);
     }
@@ -78,27 +72,32 @@ public class DialogueManager {
         return null;
     }
 
+    // ----------------------
+    // Public re-usable accessors for quests
+    // ----------------------
+    public String getInventoryDialogueFor(NPC npc) {
+        this.currentNPC = npc;
+        return checkInventoryDialogue();
+    }
+
+    public String getBasicDialogueFor(NPC npc) {
+        this.currentNPC = npc;
+        return getBasicDialogue();
+    }
+
+    // ----------------------
+    // Main entry point when player talks
+    // ----------------------
     public String talkToNPC(NPC npc){
         this.currentNPC = npc;
 
-        String questDialogue = checkQuestDialogue(npc);
-        System.out.print(questDialogue);
-        if (questDialogue != null){
-        // Run hook when quest dialogue matches stage
-            for (String questName : questDialogues.getOrDefault(npc, Map.of()).keySet()) {
-                int stage = questTracker.questManager.getQuestStage(questName);
-                questTracker.runHookIfExists(questName, stage);
-                questTracker.questManager.advanceQuestStage(questName);
-            }
-            return questDialogue;
-        }
-
+        // Then inventory-based dialogues
         String inventoryDialogue = checkInventoryDialogue();
         if (inventoryDialogue != null) {
             return inventoryDialogue;
         }
 
+        // Fallback rotating basic dialogue
         return getBasicDialogue();
     }
-
 }

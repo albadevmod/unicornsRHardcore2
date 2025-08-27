@@ -1,84 +1,121 @@
 package com.textadventure;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class QuestTracker {
 
-    // Holds all functions to set up quests and queststructure
-    public QuestManager questManager;
     // Accesses DialogueManager
-    private GameEventHandler gameEventHandler; 
+    public GameEventHandler gameEventHandler; 
     // Retrieve all chapters belonging to a level starting from here
-    private Level firstLevel;
+    private Level currentLevel;
     // If you want to move NPCs, unlock areas, etc.
     private Chapter chapter;
+    // Overarching quest object contianing relevant quest information and questEvents
+    public Quest quest;
+    // Singular "happenings" with progression ID attached to a quest
+    public QuestEvent questEvent;
 
+    public ArrayList<Quest> activeQuests = new ArrayList<>();
+    public ArrayList<Quest> finishedQuests = new ArrayList<>();
 
     public QuestTracker(GameEventHandler gameEventHandler) {
-        this.questManager = new QuestManager();
         this.gameEventHandler = gameEventHandler;
-        this.firstLevel = firstLevel;
+        this.currentLevel = null;
     }
 
-    public void setFirstLevel(Level firstLevel){
-        this.firstLevel= firstLevel;
+    public void addActiveQuest(Quest quest){
+        activeQuests.add(quest);
     }
 
-    private Map<String, Map<Integer, Runnable>> questStageHooks = new HashMap<>();
-
-    // Hooks
-    public void registerQuestStageHook(String questName, int stage, Runnable action) {
-        questStageHooks
-            .computeIfAbsent(questName, k -> new HashMap<>())
-            .put(stage, action);
+    public void addFinishedQuest(Quest quest){
+        finishedQuests.add(quest);
     }
 
-    public void runHookIfExists(String questName, int stage) {
-        if (questStageHooks.containsKey(questName)) {
-            Runnable hook = questStageHooks.get(questName).get(stage);
-            if (hook != null) hook.run();
+    public void setCurrentLevel(Level currentLevel){
+        this.currentLevel= currentLevel;
+    }
+
+    public void updateQuests(StringBuilder response) {
+        for (Quest quest : activeQuests) {
+            quest.update(response); // Each quest handles its own progression and event logic
         }
     }
 
     public void setupAllQuests() {
         setupFoxChase();
+        System.out.print("setupAllQuests finished.");
         // Add future quests here
     }
 
     private void setupFoxChase() {
-        
-        Chapter startChapter = firstLevel.getChapter("City Outskirt South East");
+
+        Quest foxChase = new Quest("foxChase");
+    // response will be passed in from GameEventHandler
+        Chapter startChapter = currentLevel.getChapter("City Outskirt South East");
         NPC fox = startChapter.getChapterNPCByName("fox");
 
-        // Start the quest initially (or when first triggered)
-        if (!questManager.isQuestStarted("foxChase")) {
-            questManager.startQuest("foxChase");
+        fox.npcQuests.add(foxChase);
+
+        foxChase.setStartCondition(() -> gameEventHandler.activeChapter == startChapter);
+        foxChase.setFinishCondition(() -> {
+            return foxChase.questIsFinished(foxChase) == true;
+        });
+
+        if(foxChase.canStart()){
+            foxChase.startQuest();
+            activeQuests.add(foxChase);
         }
 
-        Map<Integer, String> foxChaseDialogues = new HashMap<>();
-        foxChaseDialogues.put(0, "The fox scurries away to the north!");
-        foxChaseDialogues.put(1, "The fox eyes you and bolts east.");
-        foxChaseDialogues.put(2, "Something something.");
-
-        gameEventHandler.dialogueManager.addQuestDialogue(fox, "foxChase", foxChaseDialogues);
-
-        registerQuestStageHook("foxChase", 0, () -> {
-            Chapter currentChapter = startChapter;
-            Chapter targetChapter = firstLevel.getChapter("City Outskirt East");
-            firstLevel.moveNPC(fox, currentChapter, targetChapter);
+        QuestEvent introFoxChase = new QuestEvent("introFoxChase", 1);
+        introFoxChase.addEventText("As you walk through the outskirts of Sweetopolis, a sudden rustling in the bushes catches your attention.");
+        introFoxChase.setStartCondition(() -> gameEventHandler.activeChapter == startChapter);
+        introFoxChase.setOnStart((StringBuilder response) -> {
+            // Play story text
+            for (String text : introFoxChase.questEventTexts) {
+                response.append(text).append("\n");
+            }
+            // my logic here
         });
 
-        registerQuestStageHook("foxChase", 1, () -> {
-            Chapter currentChapter = firstLevel.getChapter("City Outskirt East");
-            Chapter targetChapter = firstLevel.getChapter("Willow Tree Forest");
-            firstLevel.moveNPC(fox, currentChapter, targetChapter);
+        QuestEvent foxChaseStart = new QuestEvent("foxChaseStart", 2);
+        foxChaseStart.addEventText("The sly fox darts away northward.");
+        foxChaseStart.setStartCondition(() -> gameEventHandler.lastAction.equalsIgnoreCase("talk fox"));
+        foxChaseStart.setOnStart((StringBuilder response) -> {
+            // Play story text
+            for (String text : foxChaseStart.questEventTexts) {
+                response.append(text).append("\n");
+            }
+            // my logic here
+            currentLevel.moveNPC(fox, startChapter, currentLevel.getChapter("City Outskirt East"));
         });
 
-        registerQuestStageHook("foxChase", 2, () -> {
-            gameEventHandler.dialogueManager.checkInventoryDialogue();
+        QuestEvent foxChaseMid = new QuestEvent("foxChaseMid", 3);
+        foxChaseMid.setStartCondition(() -> gameEventHandler.activeChapter == currentLevel.getChapter("City Outskirt East"));
+        foxChaseMid.addEventText("Following the fox, you see it is holding something shiny in its mouth. The fox glances back at you, but continues running east.");
+        foxChaseMid.setOnStart((StringBuilder response) -> {
+            // Play story text
+            for (String text : foxChaseMid.questEventTexts) {
+                response.append(text).append("\n");
+            }
+            // my logic here
+            currentLevel.moveNPC(fox, currentLevel.getChapter("City Outskirt East"), currentLevel.getChapter("Willow Tree Forest"));
         });
+
+        QuestEvent foxChaseEnd = new QuestEvent("foxChaseEnd", 4);
+        foxChaseEnd.setStartCondition(() -> gameEventHandler.lastAction.equalsIgnoreCase("talk fox"));
+        foxChaseEnd.addEventText("Scurrying into the bushes, the fox watches you from the safety of the undergrowth. You can only see its eyes gleaming within the shadows.");
+        foxChaseEnd.setOnStart((StringBuilder response) -> {
+            // Play story text
+            for (String text : foxChaseEnd.questEventTexts) {
+                response.append(text).append("\n");
+            }
+            // my logic here
+            foxChase.finishQuest();
+            finishedQuests.add(foxChase);
+        });
+
+        foxChase.addQuestEvents(new ArrayList<QuestEvent>(Arrays.asList(introFoxChase, foxChaseStart , foxChaseMid, foxChaseEnd)));
 
     }
-
 }

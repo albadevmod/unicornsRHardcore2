@@ -9,7 +9,8 @@ public class NPC {
     int stamina;
 
     ArrayList <String> npcDialogue = new ArrayList<>();
-    ArrayList<Item> keyItems; 
+    ArrayList <Quest> npcQuests = new ArrayList<>();
+    ArrayList<Item> keyItems = new ArrayList<>();
 
     public NPC(){};
 
@@ -22,6 +23,10 @@ public class NPC {
 
     public void addNPCDialogue(String npcDialogueString){
         npcDialogue.add(npcDialogueString);
+    }
+
+    public void addNPCQuest(Quest quest){
+        npcQuests.add(quest);
     }
 
     public ArrayList <String> getNPCDialogue(){
