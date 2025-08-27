@@ -33,10 +33,10 @@ public class Quest {
         currentEventIndex++;
     }
 
-    public void updateEvent(StringBuilder response) {
+    public void updateEvent() {
         QuestEvent event = getCurrentEvent();
         if (event != null && !event.eventCompleted && event.canStart()) {
-            event.trigger(response);
+            event.trigger();
             event.eventCompleted = true;
             advanceEvent();
         }
@@ -52,10 +52,10 @@ public class Quest {
     public boolean canStart() { return startCondition.check(); }
     public boolean canFinish() { return finishCondition.check(); }
 
-    public void update(StringBuilder response) {
+    public void update() {
         QuestEvent event = getCurrentEvent();
         if (event != null && !event.eventCompleted && event.canStart()) {
-            event.trigger(response);
+            event.trigger();
             event.eventCompleted = true;
             advanceEvent();
         }

@@ -36,9 +36,16 @@ public class QuestTracker {
         this.currentLevel= currentLevel;
     }
 
-    public void updateQuests(StringBuilder response) {
+    public void updateQuests() {
         for (Quest quest : activeQuests) {
-            quest.update(response); // Each quest handles its own progression and event logic
+            quest.update(); // Each quest handles its own progression and event logic
+        }
+    }
+
+    public void updateQuestsForNPC(NPC npc) {
+        if (npc == null || npc.npcQuests == null) return;
+        for (Quest quest : npc.npcQuests) {
+            quest.update();
         }
     }
 
@@ -70,10 +77,10 @@ public class QuestTracker {
         QuestEvent introFoxChase = new QuestEvent("introFoxChase", 1);
         introFoxChase.addEventText("As you walk through the outskirts of Sweetopolis, a sudden rustling in the bushes catches your attention.");
         introFoxChase.setStartCondition(() -> gameEventHandler.activeChapter == startChapter);
-        introFoxChase.setOnStart((StringBuilder response) -> {
+        introFoxChase.setOnStart(() -> {
             // Play story text
             for (String text : introFoxChase.questEventTexts) {
-                response.append(text).append("\n");
+                System.out.println(text);
             }
             // my logic here
         });
@@ -84,6 +91,7 @@ public class QuestTracker {
         foxChaseStart.setOnStart(() -> {
             // Play story text
             for (String text : foxChaseStart.questEventTexts) {
+                System.out.println(text);
             }
             // my logic here
             currentLevel.moveNPC(fox, startChapter, currentLevel.getChapter("City Outskirt East"));
@@ -95,6 +103,7 @@ public class QuestTracker {
         foxChaseMid.setOnStart(() -> {
             // Play story text
             for (String text : foxChaseMid.questEventTexts) {
+                System.out.println(text);
             }
             // my logic here
             currentLevel.moveNPC(fox, currentLevel.getChapter("City Outskirt East"), currentLevel.getChapter("Willow Tree Forest"));
@@ -106,6 +115,7 @@ public class QuestTracker {
         foxChaseEnd.setOnStart(() -> {
             // Play story text
             for (String text : foxChaseEnd.questEventTexts) {
+                System.out.println(text);
             }
             // my logic here
             foxChase.finishQuest();

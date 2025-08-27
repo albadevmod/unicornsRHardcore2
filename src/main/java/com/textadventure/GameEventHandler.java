@@ -63,7 +63,7 @@ public class GameEventHandler {
                 }
             }
             if (currentNPC != null && currentNPC.npcQuests.size() > 0){
-                updateQuestsForNPC(currentNPC);
+                questTracker.updateQuestsForNPC(currentNPC);
                 System.out.println("Quests updated for NPC: " + currentNPC.npcName);
             }
             else if (currentNPC != null){
@@ -93,7 +93,7 @@ public class GameEventHandler {
             response.append(activeChapter.chapterName + "\n");
             }
             if (questTracker != null) {
-                questTracker.updateQuests(response);
+                questTracker.updateQuests();
                 System.out.println("Quests updated, player moved.");
             }
             response.append(nextChapter.startChapter());
@@ -189,11 +189,5 @@ public class GameEventHandler {
         return response.toString();
     }
 
-    // Update only quests associated with a specific NPC
-    public void updateQuestsForNPC(NPC npc) {
-        if (npc == null || npc.npcQuests == null) return;
-        for (Quest quest : npc.npcQuests) {
-        }
-    }
     
 }

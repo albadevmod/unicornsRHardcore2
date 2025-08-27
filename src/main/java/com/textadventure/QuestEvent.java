@@ -34,7 +34,7 @@ public class QuestEvent {
         this.onStart = onStart;
     }
 
-    public void trigger(StringBuilder response) {
+    public void trigger() {
         if (!eventStarted) {
             eventStarted = true;
         }
