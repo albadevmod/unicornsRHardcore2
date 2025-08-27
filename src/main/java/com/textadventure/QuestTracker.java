@@ -81,10 +81,9 @@ public class QuestTracker {
         QuestEvent foxChaseStart = new QuestEvent("foxChaseStart", 2);
         foxChaseStart.addEventText("The sly fox darts away northward.");
         foxChaseStart.setStartCondition(() -> gameEventHandler.lastAction.equalsIgnoreCase("talk fox"));
-        foxChaseStart.setOnStart((StringBuilder response) -> {
+        foxChaseStart.setOnStart(() -> {
             // Play story text
             for (String text : foxChaseStart.questEventTexts) {
-                response.append(text).append("\n");
             }
             // my logic here
             currentLevel.moveNPC(fox, startChapter, currentLevel.getChapter("City Outskirt East"));
@@ -93,10 +92,9 @@ public class QuestTracker {
         QuestEvent foxChaseMid = new QuestEvent("foxChaseMid", 3);
         foxChaseMid.setStartCondition(() -> gameEventHandler.activeChapter == currentLevel.getChapter("City Outskirt East"));
         foxChaseMid.addEventText("Following the fox, you see it is holding something shiny in its mouth. The fox glances back at you, but continues running east.");
-        foxChaseMid.setOnStart((StringBuilder response) -> {
+        foxChaseMid.setOnStart(() -> {
             // Play story text
             for (String text : foxChaseMid.questEventTexts) {
-                response.append(text).append("\n");
             }
             // my logic here
             currentLevel.moveNPC(fox, currentLevel.getChapter("City Outskirt East"), currentLevel.getChapter("Willow Tree Forest"));
@@ -105,10 +103,9 @@ public class QuestTracker {
         QuestEvent foxChaseEnd = new QuestEvent("foxChaseEnd", 4);
         foxChaseEnd.setStartCondition(() -> gameEventHandler.lastAction.equalsIgnoreCase("talk fox"));
         foxChaseEnd.addEventText("Scurrying into the bushes, the fox watches you from the safety of the undergrowth. You can only see its eyes gleaming within the shadows.");
-        foxChaseEnd.setOnStart((StringBuilder response) -> {
+        foxChaseEnd.setOnStart(() -> {
             // Play story text
             for (String text : foxChaseEnd.questEventTexts) {
-                response.append(text).append("\n");
             }
             // my logic here
             foxChase.finishQuest();

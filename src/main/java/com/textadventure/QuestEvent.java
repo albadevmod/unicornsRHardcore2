@@ -27,22 +27,16 @@ public class QuestEvent {
     public boolean isStartConditionMet() {
         return startCondition != null && startCondition.check();
     }
-    // set up happenings of this event
-    @FunctionalInterface
-    public interface OnStartAction {
-        void run(StringBuilder response);
-    }
 
-    private OnStartAction onStart;
+    private Runnable onStart;
 
-    public void setOnStart(OnStartAction onStart) {
+    public void setOnStart(Runnable onStart) {
         this.onStart = onStart;
     }
 
     public void trigger(StringBuilder response) {
         if (!eventStarted) {
             eventStarted = true;
-            if (onStart != null) onStart.run(response);
         }
     }
 
