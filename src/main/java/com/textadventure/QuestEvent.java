@@ -6,7 +6,6 @@ public class QuestEvent {
 
     boolean eventStarted;
     boolean eventCompleted;
-    
 
     int stageNumber;
 
@@ -28,7 +27,7 @@ public class QuestEvent {
         return startCondition != null && startCondition.check();
     }
 
-    private Runnable onStart;
+    public Runnable onStart;
 
     public void setOnStart(Runnable onStart) {
         this.onStart = onStart;

@@ -63,8 +63,9 @@ public class GameEventHandler {
                 }
             }
             if (currentNPC != null && currentNPC.npcQuests.size() > 0){
-                questTracker.updateQuestsForNPC(currentNPC);
-                System.out.println("Quests updated for NPC: " + currentNPC.npcName);
+                questTracker.checkAndTriggerQuestEventsForNPC(currentNPC);
+                response.append("MyQuestEventText");
+                System.out.println("Talk used, Quests updated for NPC: " + currentNPC.npcName);
             }
             else if (currentNPC != null){
                 response.append(dialogueManager.talkToNPC(currentNPC));
@@ -93,8 +94,10 @@ public class GameEventHandler {
             response.append(activeChapter.chapterName + "\n");
             }
             if (questTracker != null) {
-                questTracker.updateQuests();
-                System.out.println("Quests updated, player moved.");
+                questTracker.checkAndStartQuests();
+                questTracker.checkAndTriggerQuestEvents();
+                response.append("MyQuestEventText");
+                System.out.println("Player moved, Quests updated.");
             }
             response.append(nextChapter.startChapter());
         }

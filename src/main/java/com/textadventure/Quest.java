@@ -3,7 +3,7 @@ package com.textadventure;
 import java.util.ArrayList;
 
 public class Quest {
-    private final String questName;
+    public String questName;
     private QuestEvent questEvent;
     private boolean isActive;
 
@@ -51,14 +51,17 @@ public class Quest {
 
     public boolean canStart() { return startCondition.check(); }
     public boolean canFinish() { return finishCondition.check(); }
-
-    public void update() {
-        QuestEvent event = getCurrentEvent();
-        if (event != null && !event.eventCompleted && event.canStart()) {
-            event.trigger();
-            event.eventCompleted = true;
-            advanceEvent();
+    
+    public boolean previousQuestEventCompleted(int stageNumber) {
+        if (stageNumber <= 1) return true; // First event, nothing to check
+        QuestEvent prev = null;
+        for (QuestEvent event : questEventList) {
+            if (event.stageNumber == stageNumber - 1) {
+                prev = event;
+                break;
+            }
         }
+        return prev != null && prev.eventStarted && prev.eventCompleted;
     }
 
     // Called when the quest officially starts
@@ -72,7 +75,7 @@ public class Quest {
     public void finishQuest() {
         if (isActive && canFinish()) {
             isActive = false;
-            System.out.print("quest finished.");
+            System.out.print("Quest finished.");
         }
     }
 
