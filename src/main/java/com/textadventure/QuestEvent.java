@@ -6,11 +6,14 @@ public class QuestEvent {
 
     boolean eventStarted;
     boolean eventCompleted;
+    boolean textShown;
+    boolean showTextAgain;
 
     int stageNumber;
 
     public String questEventName;
-    public ArrayList<String> questEventTexts;
+    public ArrayList<String> questEventText;
+    public Chapter associatedChapter;
 
     private QuestCondition startCondition;
 
@@ -42,11 +45,20 @@ public class QuestEvent {
     public QuestEvent(String questEventName, int stageNumber) {
         this.questEventName = questEventName;
         this.stageNumber = stageNumber;
-        this.questEventTexts = new ArrayList<>();
+        this.questEventText = new ArrayList<>();
     }
 
     public void addEventText(String text) {
-        questEventTexts.add(text);
+        questEventText.add(text);
+    }
+
+    
+    public String getEventText() {
+        StringBuilder eventText = new StringBuilder();
+        for (String text : questEventText) {
+            eventText.append(text).append("\n");
+        }
+        return eventText.toString();
     }
 
     public String getQuestEventName() {

@@ -57,14 +57,16 @@ public class GameEventHandler {
             NPC currentNPC = null;
             for(NPC npc : activeChapter.chapterNPCList){
                 if(inputStringName.equalsIgnoreCase(npc.npcName)){
-                    currentNPC = npc;
+                    currentNPC = activeChapter.getChapterNPCByName(npc.npcName);
                     System.out.println("Current NPC: " + currentNPC.npcName);
                     break;
                 }
             }
             if (currentNPC != null && currentNPC.npcQuests.size() > 0){
                 questTracker.checkAndTriggerQuestEventsForNPC(currentNPC);
-                response.append("MyQuestEventText");
+                String questText = questTracker.getQuestEventTextForNPC(currentNPC);
+                response.append(questText);
+                questTracker.completeAndAdvanceShownEventsForNPC(currentNPC);
                 System.out.println("Talk used, Quests updated for NPC: " + currentNPC.npcName);
             }
             else if (currentNPC != null){
@@ -91,12 +93,14 @@ public class GameEventHandler {
             //Output chapter name as current location indicator
             Level mapLevel = activeChapter.getAssociatedLevel();
             if (player.hasMapForLevel(mapLevel)) {
-            response.append(activeChapter.chapterName + "\n");
+                response.append(activeChapter.chapterName + "\n");
             }
             if (questTracker != null) {
                 questTracker.checkAndStartQuests();
                 questTracker.checkAndTriggerQuestEvents();
-                response.append("MyQuestEventText");
+                String questText = questTracker.getQuestEventText();
+                response.append(questText);
+                questTracker.completeAndAdvanceShownEvents();
                 System.out.println("Player moved, Quests updated.");
             }
             response.append(nextChapter.startChapter());

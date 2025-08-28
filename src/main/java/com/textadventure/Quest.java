@@ -87,5 +87,13 @@ public class Quest {
             }
         return false;
     }
+
+    public QuestEvent getPreviousEvent() {
+        int index = currentEventIndex - 1;
+        if (index >= 0 && index < questEventList.size()) {
+            return questEventList.get(index);
+        }
+        return null;
+    }
     
 }
