@@ -8,10 +8,12 @@ public class Game {
     public static GameEventHandler gameEventHandler;
     public static Arena arena;
     public static QuestTracker questTracker;
+    public static QuestLog questLog;
 
     public static String startGame(String playerName) {
         player = new Player(playerName);
         gameEventHandler = new GameEventHandler(player, null, arena);
+        questLog = new QuestLog();
         questTracker = new QuestTracker(gameEventHandler);
         dialogueManager = new DialogueManager(gameEventHandler, questTracker);
         gameEventHandler.setDialogueManager(dialogueManager);
@@ -20,6 +22,10 @@ public class Game {
         // Set activeChapter of gameEventHandler
         gameEventHandler.activeChapter = book.cottonCandyLand.initialChapter;
         gameEventHandler.setQuestTracker(questTracker);
+        questLog.setQuestTracker(questTracker);
+        questTracker.setQuestLog(questLog);
+
+        questTracker.setupAllQuests();
 
         StringBuilder introText = new StringBuilder();
 

@@ -92,8 +92,6 @@ public class Book {
         cityOutskirtSouthWest.addStoryText("From here you can get a good view of the city walls in the distance.");
         cityOutskirtSouthWest.addStoryText("Flanking the gates, they are made of hardened nougat and reinforced with chocolate bricks.");
         cityOutskirtSouthWest.addStoryText("The textures are rich and irregular, giving them the appearance of an impenetrable fortress, albeit a sweet one.");
-
-        questTracker.setupAllQuests();
         
     }
 }
