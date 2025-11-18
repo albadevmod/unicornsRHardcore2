@@ -30,7 +30,8 @@ public class Book {
     Chapter cityOutskirtEast = new Chapter(player,"City Outskirt East", cottonCandyLand);
     Chapter willowTreeForest = new Chapter(player,"Willow Tree Forest", cottonCandyLand);
 
-    Item fish = new Item("fish", true);
+    Item fish = new Item("fish");
+    Item sword = new Item("sword");
 
     NPC guard = new NPC("guard", 20, 5);
     NPC frog = new NPC("Froggy", 5, 5);
@@ -70,7 +71,11 @@ public class Book {
         ********************************************/
 
         cityOutskirtSouth.addItem(fish); 
+        fox.keyItems.add(fish);
         fish.addItemDescription("You slipped it right into your pocket. It stinks.");
+        willowTreeForest.addItem(sword);
+        sword.onGround = false;
+        sword.addItemDescription("A heavily used sword with a candy cane striped hilt and a blade made of crystallized sugar. It looks like somebody couldn't resist eating it ... it's got some bite marks.");
 
         cityOutskirtSouth.addStoryText("You have come into existence without knowing of what was before, what is, or what is going to be.");
         cityOutskirtSouth.addStoryText("You find yourself close to a big city enclosed by walls. It lays north from here.");

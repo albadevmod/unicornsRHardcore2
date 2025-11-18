@@ -90,6 +90,25 @@ public class QuestLog {
             // event logic here
             if (foxChaseEnd.textShown == true){
                 foxChaseEnd.eventCompleted = true;
+                foxChase.advanceEvent();
+            }
+        });
+
+        QuestEvent foxSword = new QuestEvent("foxSword", 5);
+        foxSword.associatedChapter = questTracker.currentLevel.getChapter("Willow Tree Forest");
+        foxSword.setStartCondition(() -> questTracker.gameEventHandler.lastAction.equalsIgnoreCase("give fish") && questTracker.gameEventHandler.activeChapter == questTracker.currentLevel.getChapter("Willow Tree Forest") && foxChase.previousQuestEventCompleted(foxSword.stageNumber));
+        foxSword.addEventText("-----------------------");
+        foxSword.addEventText("You fling the fish toward the fox and it snaps it out of the air. After some rustling, a sword comes flying out of the bushes, landing right in front of your feet.");
+        foxSword.addEventText("You take the sword.");
+        foxSword.addEventText("-----------------------");
+        foxSword.setOnStart(() -> {
+            foxSword.eventStarted = true;
+            // event logic here
+            if (foxSword.textShown == true){
+                foxSword.eventCompleted = true;
+                // Add sword to player inventory (assuming addItem method exists)
+                Item sword = questTracker.gameEventHandler.activeChapter.getItemByName("sword");
+                questTracker.gameEventHandler.player.addItemToInventory(sword);
                 foxChase.finishQuest();
                 questTracker.finishedQuests.add(foxChase);
                 fox.npcQuests.remove(foxChase);
@@ -97,7 +116,7 @@ public class QuestLog {
             }
         });
 
-        foxChase.addQuestEvents(new ArrayList<QuestEvent>(Arrays.asList(introFoxChase, foxChaseStart , foxChaseMid, foxChaseEnd)));
+        foxChase.addQuestEvents(new ArrayList<QuestEvent>(Arrays.asList(introFoxChase, foxChaseStart , foxChaseMid, foxChaseEnd, foxSword)));
 
     }
 }

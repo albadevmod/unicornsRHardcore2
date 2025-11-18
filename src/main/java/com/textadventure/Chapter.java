@@ -106,6 +106,16 @@ public class Chapter {
         }
         return sb.toString();
     }
+
+    // retrieve items attached to chapter by name
+    public Item getItemByName(String itemName) {
+        for (Item item : chapterItemList) {
+            if (item.itemName.equalsIgnoreCase(itemName)) {
+                return item;
+            }
+        }
+        return null;
+    }
     
     /********************************************
      *            NPC FUNCTIONS                 *

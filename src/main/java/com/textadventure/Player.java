@@ -48,6 +48,10 @@ public class Player {
         return inventory.contains(item);
     }
 
+    public void giveItem(Item item){
+        inventory.remove(item);
+    }
+
     // Handle Map Logic
      public boolean hasMapForLevel(Level level) {
         return discoveredMaps.contains(level);

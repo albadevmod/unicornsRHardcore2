@@ -46,7 +46,10 @@ public class GameEventHandler {
             String itemName = inputString.substring(8).trim();
             response.append(inspectItem(itemName));
 
-        } else if (inputString.startsWith("inspect")) {
+        } else if(inputString.startsWith("give ")){
+            String itemName = inputString.substring(5).trim();
+            response.append(giveItem(itemName));
+        }else if (inputString.startsWith("inspect")) {
             response.append(inspect());
 
         } else if(inputString.equals("inventory")) {
@@ -129,8 +132,10 @@ public class GameEventHandler {
         response.append("You found some items. You added them to your *inventory*.\n");
 
         for(Item item : activeChapter.chapterItemList){
-            response.append("- ").append(item.itemName).append("\n");
-            player.addItemToInventory(item);
+            if(item.onGround == true){
+                response.append("- ").append(item.itemName).append("\n");
+                player.addItemToInventory(item);
+            }
         }
 
         activeChapter.chapterItemList.clear();
@@ -172,6 +177,67 @@ public class GameEventHandler {
             }
         }
         return "Not an item in your inventory. Try again.";
+    }
+
+    // Method to give an item to an NPC
+    public String giveItem(String itemName) {
+        StringBuilder response = new StringBuilder();
+        
+        // Find the item in player's inventory
+        Item itemToGive = null;
+        for (Item item : player.getInventory()) {
+            if (item != null && item.itemName.equalsIgnoreCase(itemName)) {
+                itemToGive = item;
+                break;
+            }
+        }
+        
+        if (itemToGive == null) {
+            response.append("You don't have a ").append(itemName).append(" to give.");
+            return response.toString();
+        }
+        
+        // Check if there's an NPC in the current chapter that wants this item
+        NPC targetNPC = null;
+        for (NPC npc : activeChapter.chapterNPCList) {
+            // Check if this NPC has this item in their keyItems (items they want/need)
+            for (Item keyItem : npc.keyItems) {
+                if (keyItem.itemName.equalsIgnoreCase(itemName)) {
+                    targetNPC = npc;
+                    break;
+                }
+            }
+            if (targetNPC != null) break;
+        }
+        
+        if (targetNPC == null) {
+            response.append("There's nobody here who wants your ").append(itemName).append(".");
+            return response.toString();
+        }
+        
+        // Remove item from player's inventory
+        player.giveItem(itemToGive);
+        
+        // Add item to NPC's keyItems (they now have it)
+        // Note: You might want to create a separate "inventory" list for NPCs if needed
+        
+        response.append("-----------------------\n");
+        response.append("You gave the ").append(itemName).append(" to ").append(targetNPC.npcName).append(".\n");
+        
+        // Check for quest events triggered by giving this item
+        if (questTracker != null && targetNPC.npcQuests.size() > 0) {
+            questTracker.checkAndTriggerQuestEventsForNPC(targetNPC);
+            String questText = questTracker.getQuestEventTextForNPC(targetNPC);
+            response.append(questText);
+            questTracker.completeAndAdvanceShownEventsForNPC(targetNPC);
+            System.out.println("Item given, Quests updated for NPC: " + targetNPC.npcName);
+        } else {
+            // Default response if no quest is triggered
+            response.append(targetNPC.npcName).append(" accepts the ").append(itemName).append(".\n");
+        }
+        
+        response.append("-----------------------\n");
+        return response.toString();
     }
 
     // Method to display the player's inventory

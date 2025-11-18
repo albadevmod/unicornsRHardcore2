@@ -124,7 +124,9 @@ public class QuestTracker {
     }
 
     public void completeAndAdvanceShownEvents() {
-        for (Quest quest : activeQuests) {
+        // Create a copy of the active quests list to avoid concurrent modification
+        ArrayList<Quest> questsCopy = new ArrayList<>(activeQuests);
+        for (Quest quest : questsCopy) {
             QuestEvent event = quest.getCurrentEvent();
             if (event != null && event.eventStarted && event.textShown && !event.eventCompleted) {
                 if (event.onStart != null) {
@@ -135,7 +137,9 @@ public class QuestTracker {
     }
 
     public void completeAndAdvanceShownEventsForNPC(NPC npc) {
-        for (Quest quest : npc.npcQuests) {
+        // Create a copy of the quest list to avoid concurrent modification
+        ArrayList<Quest> questsCopy = new ArrayList<>(npc.npcQuests);
+        for (Quest quest : questsCopy) {
             QuestEvent event = quest.getCurrentEvent();
             if (event != null && event.eventStarted && event.textShown && !event.eventCompleted) {
                 if (event.onStart != null) {
