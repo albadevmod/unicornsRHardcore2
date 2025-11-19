@@ -11,7 +11,7 @@ public class GameEventHandler {
     QuestTracker questTracker;
     Arena arena;
 
-    public GameEventHandler(Player player, Chapter activeChapter, Arena arena){
+    public GameEventHandler(Player player, Chapter activeChapter){
         this.player = player;
         this.activeChapter = activeChapter;
         this.arena = arena;
@@ -25,12 +25,19 @@ public class GameEventHandler {
         this.questTracker = questTracker;
     }
 
+    public void setArena(Arena arena) {
+        this.arena = arena;
+    }
+
     // Method to process input from the player
     public String processInput (String inputString){
         this.lastAction = inputString;
         StringBuilder response = new StringBuilder();
         inputString = inputString.toLowerCase();
 
+        if (arena != null && arena.combatStarted != null && arena.combatStarted) {
+            return arena.processCombatInput(inputString);
+        }
         if (inputString.equals("north") || inputString.equals("south") ||
             inputString.equals("west") || inputString.equals("east")) {
             if(activeChapter.nextChapters.get(inputString) == null){
@@ -78,6 +85,27 @@ public class GameEventHandler {
                 System.out.println("Normal dialogue cued.");
             } else {
                 response.append("This doesn't seem to be anybody's name here.");
+            }
+        } else if(inputString.startsWith("attack ")) {
+            String inputStringName = inputString.substring(7).trim();
+            NPC currentNPC = null;
+            for(NPC npc : activeChapter.chapterNPCList){
+                if(inputStringName.equalsIgnoreCase(npc.npcName)){
+                    currentNPC = activeChapter.getChapterNPCByName(npc.npcName);
+                    System.out.println("Current NPC: " + currentNPC.npcName);
+                    break;
+                }
+            }
+            if (currentNPC != null && currentNPC.isHostile) {
+                arena.enemyNPC = currentNPC; // Set the enemy NPC in arena
+                arena.combatStarted = true;
+                response.append(arena.initiateCombat(player, currentNPC));
+                // DON'T call arena.processCombatInput here!
+                response.append("A fight ensues!");
+                response.append("\n\nEnter your combat action (poke, flail arms, push kick, intimidate)");
+                System.out.println("Combat initiated with NPC: " + currentNPC.npcName);
+            } else {
+                response.append("There's no one here by that name to attack.");
             }
         } else {
             response.append("Invalid input. You did a backflip. Try again.");

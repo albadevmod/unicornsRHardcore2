@@ -31,11 +31,11 @@ public class Book {
     Chapter willowTreeForest = new Chapter(player,"Willow Tree Forest", cottonCandyLand);
 
     Item fish = new Item("fish");
-    Item sword = new Item("sword");
+    Item sword = new Weapon("sword", 3, 5);
 
-    NPC guard = new NPC("guard", 20, 5);
-    NPC frog = new NPC("Froggy", 5, 5);
-    NPC fox = new NPC("fox", 10, 40);
+    NPC guard = new NPC("guard", 20, 5, 8);
+    NPC frog = new NPC("Froggy", 5, 0, 0);
+    NPC fox = new NPC("fox", 10, 0, 0);
 
     public void createBook(){
 

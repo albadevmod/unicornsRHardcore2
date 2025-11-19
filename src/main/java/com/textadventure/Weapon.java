@@ -1,22 +1,13 @@
 package com.textadventure;
-import java.util.ArrayList;
 
-public class Weapon {
-    public String weaponName;
-    public int baseDamage;
+public class Weapon extends Item {
+    public int minDamage;
+    public int maxDamage;
 
-    ArrayList <String> weaponDescription = new ArrayList<>();
-
-    public Weapon(String weaponName, int baseDamage){
-        this.weaponName = weaponName;
-        this.baseDamage = baseDamage;
+    public Weapon(String itemName, int minDamage, int maxDamage){
+        super(itemName); // Call parent constructor
+        this.minDamage = minDamage;
+        this.maxDamage = maxDamage;
     }
 
-    public void addItemDescription(String itemDescription) {
-        weaponDescription.add(itemDescription);
-    }
-
-    public ArrayList <String> getItemDescription(){
-        return weaponDescription;
-    }
 }

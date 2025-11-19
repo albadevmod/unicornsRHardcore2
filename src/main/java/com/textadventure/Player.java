@@ -11,6 +11,7 @@ public class Player {
     int health;
     int stamina;
     Item item;
+    Item weapon;
 
     ArrayList<String> playerDialogue = new ArrayList<>();
     ArrayList<Item> inventory = new ArrayList<>();
@@ -50,6 +51,11 @@ public class Player {
 
     public void giveItem(Item item){
         inventory.remove(item);
+    }
+
+    // set weapon
+    public void setWeapon(Item weapon){
+        this.weapon = weapon;
     }
 
     // Handle Map Logic

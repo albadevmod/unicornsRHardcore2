@@ -6,7 +6,9 @@ public class NPC {
 
     String npcName;
     int health;
-    int stamina;
+    int armor;
+    int attackDamage;
+    Boolean isHostile;
 
     ArrayList <String> npcDialogue = new ArrayList<>();
     ArrayList <Quest> npcQuests = new ArrayList<>();
@@ -14,10 +16,11 @@ public class NPC {
 
     public NPC(){};
 
-    public NPC(String npcName, int health, int stamina){
+    public NPC(String npcName, int health, int armor, int attackDamage){
         this.npcName = npcName;
         this.health = health;
-        this.stamina = stamina;
+        this.armor = armor;
+        this.attackDamage = attackDamage;
         this.keyItems = keyItems;
     }
 
@@ -31,6 +34,12 @@ public class NPC {
 
     public ArrayList <String> getNPCDialogue(){
         return npcDialogue;
+    }
+
+    // if the enemy is hostlie but cannot be attacked (like a guard) and a special dialogue is needed for this case,
+    // this is the method to call
+    public String getsAttacked(String string){
+        return string;
     }
 
 }
