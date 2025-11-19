@@ -78,6 +78,10 @@ public class Player {
     public boolean hasSeen(String event) {
         return seenEvents.contains(event);
     }
+    
+    public boolean isDead() {
+        return health <= 0;
+    }
 
 
 }

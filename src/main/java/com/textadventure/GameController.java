@@ -9,27 +9,30 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin(origins = "http://localhost:8080") 
 public class GameController {
 
-    private Game game;
-
     @PostMapping("/start")
     public String startGame(@RequestBody String playerName) {
-        return game.startGame(playerName); // pass name directly
+        return Game.startGame(playerName); // pass name directly
     }
 
     @PostMapping("/command")
     public String handleCommand(@RequestBody String command) {
-        return game.handleInput(command);
+        return Game.handleInput(command);
     }
 
     @PostMapping("/map")
     public String getCurrentMapBackground() {
-        Level currentLevel = game.gameEventHandler.activeChapter.getAssociatedLevel();
+        Level currentLevel = Game.gameEventHandler.activeChapter.getAssociatedLevel();
         if (currentLevel == null) return "#2b2b2b"; // fallback
 
-        Player player = game.player;
+        Player player = Game.player;
         if (player.hasMapForLevel(currentLevel)) {
             return currentLevel.getLevelMap().getImageDir(); // e.g. "/images/maps/candy_map.png"
         }
         return "#2b2b2b";
+    }
+    
+    @PostMapping("/gameover")
+    public String isGameOver() {
+        return String.valueOf(Game.player.isDead());
     }
 }

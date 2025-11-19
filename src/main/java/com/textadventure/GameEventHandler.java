@@ -101,7 +101,7 @@ public class GameEventHandler {
                 arena.combatStarted = true;
                 response.append(arena.initiateCombat(player, currentNPC));
                 // DON'T call arena.processCombatInput here!
-                response.append("A fight ensues!");
+                response.append("\nA fight ensues!");
                 response.append("\n\nEnter your combat action (poke, flail arms, push kick, intimidate)");
                 System.out.println("Combat initiated with NPC: " + currentNPC.npcName);
             } else if (player.weapon == null) {
@@ -344,6 +344,5 @@ public class GameEventHandler {
         response.append("Type 'inspect [itemName]' to inspect an item.");
         return response.toString();
     }
-
     
 }

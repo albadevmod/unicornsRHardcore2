@@ -19,13 +19,15 @@
     }
     #output {
       display: flex;
-      height: 300px;
+      height: 55vh;
+      min-height: 300px;
+      max-height: 900px;
       margin-bottom: 10px;
     }
     .outputWindow{
       background: #2b2b2b;
       width: 70%;
-      height: 300px;
+      height: 100%;
       padding-left: 10px;
       scroll-padding: 10px;
       overflow-y: auto;
@@ -36,7 +38,7 @@
     }
     .outputMap {
       width: 30%;
-      height: 300px;
+      height: 100%;
       border: 1px solid #444;
       white-space: pre-wrap;
       margin-bottom: 10px;
@@ -85,8 +87,11 @@
       margin-bottom: 10px;
     }
     #footer{
+      position: fixed;
+      bottom: 15px;
+      left: 15px;
+      right: 15px;
       height: 180px;
-      width: 100%;
       margin: 0 auto; /* ✅ This centers it horizontally */
       padding: 3px;
       border: 1px solid #444;
@@ -94,6 +99,39 @@
       background-position: center; /* Centers the image */
       background-size: cover; 
       background-repeat: no-repeat; /* Prevents tiling */
+      z-index: 10;
+    }
+    #gameover {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-image: url("images/nightskyascii.png");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      color: #ff6b6b;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      font-family: monospace;
+    }
+    
+    #gameover pre {
+      text-align: center;
+      font-size: 1.2em;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+      animation: fadeIn 5s ease-out forwards;
+    }
+    
+    #gameover .reload-hint {
+      margin-top: 20px;
+      font-size: 1em;
+      color: #ffd93d;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
     }
   </style>
 </head>
@@ -138,11 +176,34 @@
   </pre>
 </div>
 
+<div id="gameover">
+  <pre>
+ _______ _______ _______ _______      _______ ___ ___ _______ ______ 
+|     __|   _   |   |   |    ___|    |       |   |   |    ___|   __ \
+|    |  |       |       |    ___|    |   -   |   |   |    ___|      <
+|_______|___|___|__|_|__|_______|    |_______|\\\___/|_______|___|\_|
+
+    Your adventure ends here...
+    
+    :: Spring Boot ::                (v3.2.5)
+    :: Alba Pläp Golfe ::
+    :: 2025 ::
+  </pre>
+  <div class="reload-hint">Reload website to play again!</div>
+</div>
+
   <script>
     const output = document.querySelector('.outputWindow');
     const outputMap = document.querySelector('.outputMap');
     const nameInput = document.getElementById('nameInput');
     const commandInput = document.getElementById('command');
+    
+    function showGameOver() {
+      document.getElementById('gameover').style.display = 'flex';
+      commandInput.disabled = true;
+      commandInput.style.display = 'none';
+      document.getElementById('menu').style.display = 'none';
+    }
 
     nameInput.addEventListener('keydown', async function (e) {
       if (e.key === 'Enter') {
@@ -188,6 +249,12 @@
       .then(data => {
         output.textContent += `\n${data}`;
         output.scrollTop = output.scrollHeight;
+        
+        // Check if player died (game over)
+        if (data.includes("GAME OVER")) {
+          showGameOver();
+          return;
+        }
 
       fetch('http://localhost:8080/map', {
         method: 'POST'

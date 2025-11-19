@@ -70,8 +70,9 @@ public class Arena{
     }
 
     public String intimidate(NPC enemyNPC){
+        String returnString = ("You go on all fours, shaking uncontrollably and making screeching noises.\n " + enemyNPC.npcName + " attack damage lowered by 1 due to intimidation!");
         enemyNPC.attackDamage -= 1;
-        return enemyNPC.npcName + " attack damage lowered by 1 due to intimidation!";
+        return returnString;
     }
 
     public String checkEnemyHealth(NPC enemyNPC){
@@ -92,37 +93,67 @@ public class Arena{
         }
     }
 
+    private String executeCombatAction(String action, StringBuilder response) {
+        switch (action) {
+            case "poke":
+                response.append(hitEnemy(player, enemyNPC)).append("\n");
+                if (isCombatOver()) return response.append("You poke the enemies eye out and claim victory!").toString();
+                response.append(takeDamage(player, enemyNPC)).append("\n");
+                break;
+            case "flail arms":
+                response.append(flailArms(enemyNPC)).append("\n");
+                if (isCombatOver()) return response.append("You defeat your enemy by a thousand bleeding cuts.").toString();
+                response.append(takeDamage(player, enemyNPC)).append("\n");
+                break;
+            case "push kick":
+                response.append(pushKick(enemyNPC)).append("\n");
+                response.append(takeDamage(player, enemyNPC)).append("\n");
+                break;
+            case "intimidate":
+                response.append(intimidate(enemyNPC)).append("\n");
+                response.append(takeDamage(player, enemyNPC)).append("\n");
+                break;
+            default:
+                response.append("Invalid combat action. Get back into the fight!");
+                return response.toString();
+        }
+        
+        // Check if combat ended after taking damage
+        if (isCombatOver()) return response.append("\n\nGAME OVER.").toString();
+        
+        return null; // Combat continues
+    }
+    
+    private boolean isCombatOver() {
+        if (enemyNPC.health <= 0) {
+            combatStarted = false;
+            return true;
+        }
+        if (player.health <= 0) {
+            combatStarted = false;
+            return true;
+        }
+        return false;
+    }
+    
+    private void appendCombatStatus(StringBuilder response) {
+        response.append("\n--- Combat Status ---\n");
+        response.append(player.getPlayerName()).append(" HP: ").append(player.health).append("\n");
+        response.append(enemyNPC.npcName).append(" HP: ").append(enemyNPC.health).append("\n");
+        response.append("Enter your next action:\n");
+    }
+
     public String processCombatInput (String inputString){
         gameEventHandler.lastAction = inputString;
         StringBuilder response = new StringBuilder();
-        inputString = inputString.toLowerCase();
-            //attack
-        if (inputString.equals("poke")){
-            response.append(hitEnemy(player, enemyNPC) + "\n");
-            response.append(takeDamage(player, enemyNPC) + "\n");
-            response.append(checkEnemyHealth(enemyNPC)).append("\n");
-            response.append(checkPlayerHealth(player)).append("\n");
-            // attack
-        } else if (inputString.equals("flail arms")){
-            response.append("You go on all fours, shaking uncontrollably and making screeching noises.\n");
-            response.append(flailArms(enemyNPC) + "\n");
-            response.append(takeDamage(player, enemyNPC) + "\n");
-            // status effect
-        } else if (inputString.equals("push kick")){
-            response.append(pushKick(enemyNPC)).append("\n");
-            response.append(takeDamage(player, enemyNPC)).append("\n");
-            // status effect
-        } else if (inputString.equals("intimidate")){
-            response.append(intimidate(enemyNPC)).append("\n");
-            response.append(takeDamage(player, enemyNPC)).append("\n");
-        } else {
-            response.append("Invalid combat action. Get back into the fight!");
-        } if (combatStarted) {
-            response.append("\n--- Combat Status ---\n");
-            response.append(player.getPlayerName() + " HP: " + player.health + "\n");
-            response.append(enemyNPC.npcName + " HP: " + enemyNPC.health + "\n");
-            response.append("Enter your next action:\n");
+        String action = inputString.toLowerCase();
+        
+        String result = executeCombatAction(action, response);
+        if (result != null) {
+            return result; // Combat ended
         }
+        
+        appendCombatStatus(response);
         return response.toString();
     }
 
