@@ -72,7 +72,7 @@ public class GameEventHandler {
                     break;
                 }
             }
-            if (currentNPC != null && currentNPC.npcQuests.size() > 0){
+            if (currentNPC != null && !currentNPC.npcQuests.isEmpty()){
                 questTracker.checkAndTriggerQuestEventsForNPC(currentNPC);
                 String questText = questTracker.getQuestEventTextForNPC(currentNPC);
                 response.append(questText);
@@ -96,7 +96,7 @@ public class GameEventHandler {
                     break;
                 }
             }
-            if (currentNPC != null && currentNPC.isHostile) {
+            if (currentNPC != null && currentNPC.isHostile && player.weapon != null) {
                 arena.enemyNPC = currentNPC; // Set the enemy NPC in arena
                 arena.combatStarted = true;
                 response.append(arena.initiateCombat(player, currentNPC));
@@ -104,7 +104,11 @@ public class GameEventHandler {
                 response.append("A fight ensues!");
                 response.append("\n\nEnter your combat action (poke, flail arms, push kick, intimidate)");
                 System.out.println("Combat initiated with NPC: " + currentNPC.npcName);
-            } else {
+            } else if (player.weapon == null) {
+                response.append("You have no weapon. What are you trying to do?");
+            } else if (currentNPC.isHostile == false) {
+                response.append("They don't seem to care whatsoever.");
+            }else {
                 response.append("There's no one here by that name to attack.");
             }
         } else {
@@ -225,13 +229,26 @@ public class GameEventHandler {
             return response.toString();
         }
         
-        // Check if there's an NPC in the current chapter that wants this item
+        // Only quest items can be given away - regular items should never be transferable
+        if (!itemToGive.questItem) {
+            response.append("You can't give away the ").append(itemName).append(".");
+            return response.toString();
+        }
+        
+        // Check if there's an NPC in the current chapter that can receive this quest item
         NPC targetNPC = null;
+        boolean canGiveItem = false;
+        
         for (NPC npc : activeChapter.chapterNPCList) {
             // Check if this NPC has this item in their keyItems (items they want/need)
             for (Item keyItem : npc.keyItems) {
                 if (keyItem.itemName.equalsIgnoreCase(itemName)) {
                     targetNPC = npc;
+                    
+                    // For quest items, verify they are part of the current active quest stage
+                    if (questTracker != null && !npc.npcQuests.isEmpty()) {
+                        canGiveItem = isItemValidForCurrentQuestStage(itemToGive, npc);
+                    }
                     break;
                 }
             }
@@ -243,17 +260,19 @@ public class GameEventHandler {
             return response.toString();
         }
         
+        if (!canGiveItem) {
+            response.append("This doesn't seem like the right time to give the ").append(itemName).append(".");
+            return response.toString();
+        }
+        
         // Remove item from player's inventory
         player.giveItem(itemToGive);
-        
-        // Add item to NPC's keyItems (they now have it)
-        // Note: You might want to create a separate "inventory" list for NPCs if needed
         
         response.append("-----------------------\n");
         response.append("You gave the ").append(itemName).append(" to ").append(targetNPC.npcName).append(".\n");
         
         // Check for quest events triggered by giving this item
-        if (questTracker != null && targetNPC.npcQuests.size() > 0) {
+        if (questTracker != null && !targetNPC.npcQuests.isEmpty()) {
             questTracker.checkAndTriggerQuestEventsForNPC(targetNPC);
             String questText = questTracker.getQuestEventTextForNPC(targetNPC);
             response.append(questText);
@@ -266,6 +285,42 @@ public class GameEventHandler {
         
         response.append("-----------------------\n");
         return response.toString();
+    }
+    
+    // Helper method to validate if an item can be given for the current quest stage
+    private boolean isItemValidForCurrentQuestStage(Item item, NPC npc) {
+        // Check each active quest for this NPC
+        for (Quest quest : npc.npcQuests) {
+            QuestEvent currentEvent = quest.getCurrentEvent();
+            
+            // If there's no current event, this quest isn't active
+            if (currentEvent == null) {
+                continue;
+            }
+            
+            // Check if this quest event expects this specific item to be given
+            // This is determined by the quest event's start condition checking for "give [itemName]"
+            if (currentEvent.canStart() && isQuestEventExpectingItem(currentEvent, item)) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    // Helper method to check if a quest event is expecting a specific item
+    private boolean isQuestEventExpectingItem(QuestEvent questEvent, Item item) {
+        // This method checks if the current quest event's start condition is looking for this item
+        // We simulate the action and check if the start condition would be satisfied
+        String originalLastAction = this.lastAction;
+        this.lastAction = "give " + item.itemName.toLowerCase();
+        
+        boolean expectsItem = questEvent.canStart();
+        
+        // Restore original last action
+        this.lastAction = originalLastAction;
+        
+        return expectsItem;
     }
 
     // Method to display the player's inventory

@@ -29,12 +29,14 @@ public class Book {
     Chapter cityOutskirtSouthWest = new Chapter(player,"City Outskirt South West", cottonCandyLand);
     Chapter cityOutskirtEast = new Chapter(player,"City Outskirt East", cottonCandyLand);
     Chapter willowTreeForest = new Chapter(player,"Willow Tree Forest", cottonCandyLand);
+    Chapter cityOutskirtWest = new Chapter(player,"City Outskirt West", cottonCandyLand);
 
     Item fish = new Item("fish");
-    Item sword = new Weapon("sword", 3, 5);
+    // sword is now created dynamically in QuestLog.java during quest completion
 
     NPC guard = new NPC("guard", 20, 5, 8);
-    NPC frog = new NPC("Froggy", 5, 0, 0);
+    NPC guyWithHorseMask = new NPC("guy", 20, 2, 8);
+    NPC frog = new NPC("froggy", 5, 0, 0);
     NPC fox = new NPC("fox", 10, 0, 0);
 
     public void createBook(){
@@ -48,7 +50,8 @@ public class Book {
         cityOutskirtSouth.addNextChapters(sweetopolisCityGateSouth, cityOutskirtSouthEast, null, cityOutskirtSouthWest);
         sweetopolisCityGateSouth.addNextChapters(null, null, cityOutskirtSouth, null);
         cityOutskirtSouthEast.addNextChapters(cityOutskirtEast, null, null, cityOutskirtSouth);
-        cityOutskirtSouthWest.addNextChapters(null, cityOutskirtSouth, null, null);
+        cityOutskirtSouthWest.addNextChapters(cityOutskirtWest, cityOutskirtSouth, null, null);
+        cityOutskirtWest.addNextChapters(null, null, cityOutskirtSouthWest, null);
         cityOutskirtEast.addNextChapters(null, willowTreeForest, cityOutskirtSouthEast, null);
         willowTreeForest.addNextChapters(null, null, null, cityOutskirtEast);
 
@@ -70,12 +73,16 @@ public class Book {
         *           CityOutskirtSouthEast           *
         ********************************************/
 
-        cityOutskirtSouth.addItem(fish); 
-        fox.keyItems.add(fish);
+        cityOutskirtSouth.addItem(fish);
         fish.addItemDescription("You slipped it right into your pocket. It stinks.");
-        willowTreeForest.addItem(sword);
-        sword.onGround = false;
-        sword.addItemDescription("A heavily used sword with a candy cane striped hilt and a blade made of crystallized sugar. It looks like somebody couldn't resist eating it ... it's got some bite marks.");
+        fish.onGround = true;
+
+        fox.keyItems.add(fish);
+        fish.questItem = true;
+        
+        // Note: sword is created during quest completion, not placed in world
+        // willowTreeForest.addItem(sword); // REMOVED - sword only appears through quest
+        // sword.addItemDescription moved to QuestLog.java where sword is created
 
         cityOutskirtSouth.addStoryText("You have come into existence without knowing of what was before, what is, or what is going to be.");
         cityOutskirtSouth.addStoryText("You find yourself close to a big city enclosed by walls. It lays north from here.");
@@ -97,6 +104,15 @@ public class Book {
         cityOutskirtSouthWest.addStoryText("From here you can get a good view of the city walls in the distance.");
         cityOutskirtSouthWest.addStoryText("Flanking the gates, they are made of hardened nougat and reinforced with chocolate bricks.");
         cityOutskirtSouthWest.addStoryText("The textures are rich and irregular, giving them the appearance of an impenetrable fortress, albeit a sweet one.");
+
+        cityOutskirtWest.addNPCsToChapter(new ArrayList<NPC>(Arrays.asList(guyWithHorseMask)));
+        guyWithHorseMask.isHostile = true;
+        gameEventHandler.dialogueManager.addBasicDialogue(guyWithHorseMask, new ArrayList<>(Arrays.asList("He glares at you through the eye holes of his horse mask.", "He doesn't seem friendly ...")));
+        cityOutskirtWest.addStoryText("------------------------------------------");
+        cityOutskirtWest.addStoryText("The cotton candy strands in the air seem less dense here. The blue sky is clearly visible above you.");
+        cityOutskirtWest.addStoryText("Swaying in the breeze, candy flowers made of sugar glass shimmer in the sunlight, climpering softly when touching each other.");
+        cityOutskirtWest.addStoryText("Within the bright specs of red, yellow and violet, stands a ... naked man with a horse mask. Menacing.");
+        cityOutskirtWest.addStoryText("------------------------------------------");
         
     }
 }

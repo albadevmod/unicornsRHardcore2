@@ -30,7 +30,7 @@ public class QuestLog {
         introFoxChase.associatedChapter = startChapter;
         introFoxChase.addEventText("-----------------------");
         introFoxChase.addEventText("As you walk through the outskirts of Sweetopolis, a sudden rustling in the bushes catches your attention.");
-        introFoxChase.addEventText("It's a fox!");
+        introFoxChase.addEventText("It's a fox! It doesn't seem to be paying attention to you as it's digging up something in the ground ...");
         introFoxChase.addEventText("-----------------------");
         introFoxChase.showTextAgain = true;
         introFoxChase.setStartCondition(() -> questTracker.gameEventHandler.activeChapter == startChapter);
@@ -99,16 +99,18 @@ public class QuestLog {
         foxSword.setStartCondition(() -> questTracker.gameEventHandler.lastAction.equalsIgnoreCase("give fish") && questTracker.gameEventHandler.activeChapter == questTracker.currentLevel.getChapter("Willow Tree Forest") && foxChase.previousQuestEventCompleted(foxSword.stageNumber));
         foxSword.addEventText("-----------------------");
         foxSword.addEventText("You fling the fish toward the fox and it snaps it out of the air. After some rustling, a sword comes flying out of the bushes, landing right in front of your feet.");
-        foxSword.addEventText("You take the sword.");
+        foxSword.addEventText("You take the sword and equip it as your weapon.");
         foxSword.addEventText("-----------------------");
         foxSword.setOnStart(() -> {
             foxSword.eventStarted = true;
             // event logic here
             if (foxSword.textShown == true){
                 foxSword.eventCompleted = true;
-                // Add sword to player inventory (assuming addItem method exists)
-                Item sword = questTracker.gameEventHandler.activeChapter.getItemByName("sword");
+                // Create and add sword to player inventory
+                Weapon sword = new Weapon("sword", 3, 5);
+                sword.addItemDescription("A heavily used sword with a candy cane striped hilt and a blade made of crystallized sugar. It looks like somebody couldn't resist eating it ... it's got some bite marks.");
                 questTracker.gameEventHandler.player.addItemToInventory(sword);
+                questTracker.gameEventHandler.player.weapon = sword;
                 foxChase.finishQuest();
                 questTracker.finishedQuests.add(foxChase);
                 fox.npcQuests.remove(foxChase);

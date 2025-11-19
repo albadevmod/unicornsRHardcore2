@@ -4,13 +4,13 @@ import java.util.ArrayList;
 public class Item {
     String itemName;
     String itemType; // consumable, distinct
-    Boolean onGround;
+    Boolean onGround = false;
+    Boolean questItem = false;
 
     ArrayList <String> itemDescriptions = new ArrayList<>();
 
     public Item(String itemName){
         this.itemName = itemName;
-        this.onGround = true;
     }
 
     public void addItemDescription(String itemDescription) {

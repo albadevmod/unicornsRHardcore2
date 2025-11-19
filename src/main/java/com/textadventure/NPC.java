@@ -8,7 +8,7 @@ public class NPC {
     int health;
     int armor;
     int attackDamage;
-    Boolean isHostile;
+    Boolean isHostile = false;
 
     ArrayList <String> npcDialogue = new ArrayList<>();
     ArrayList <Quest> npcQuests = new ArrayList<>();
