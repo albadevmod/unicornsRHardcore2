@@ -9,7 +9,14 @@
       font-family: monospace;
       background-color: #1e1e1e;
       color: #f0f0f0;
+      margin: 0;
       padding: 15px;
+      height: 100vh;
+      box-sizing: border-box;
+      display: grid;
+      grid-template-rows: 1fr auto auto;
+      gap: 10px;
+      overflow: hidden;
     }
     #title{
       width: 50%;
@@ -19,10 +26,9 @@
     }
     #output {
       display: flex;
-      height: 55vh;
-      min-height: 300px;
-      max-height: 900px;
-      margin-bottom: 10px;
+      height: 100%;
+      margin-bottom: 0;
+      min-height: 200px;
     }
     .outputWindow{
       background: #2b2b2b;
@@ -50,9 +56,16 @@
       align-items: center;
       justify-content: center;
     }
+    .middle-section {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: fit-content;
+    }
     #menu{
       display: none;
       gap: 10px;
+      flex-wrap: wrap;
     }
     .menuItem {
       width: fit-content;
@@ -87,19 +100,17 @@
       margin-bottom: 10px;
     }
     #footer{
-      position: fixed;
-      bottom: 15px;
-      left: 15px;
-      right: 15px;
-      height: 180px;
-      margin: 0 auto; /* ✅ This centers it horizontally */
+      height: 25vh;
+      min-height: 140px;
+      max-height: 200px;
+      margin: 0;
       padding: 3px;
       border: 1px solid #444;
       background-image: url("images/nightskyascii.png");
-      background-position: center; /* Centers the image */
+      background-position: center;
       background-size: cover; 
-      background-repeat: no-repeat; /* Prevents tiling */
-      z-index: 10;
+      background-repeat: no-repeat;
+      overflow: hidden;
     }
     #gameover {
       position: fixed;
@@ -133,6 +144,39 @@
       color: #ffd93d;
       text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
     }
+    
+    #win {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-image: url("images/nightskyascii.png");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      color: #4CAF50;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      font-family: monospace;
+    }
+    
+    #win pre {
+      text-align: center;
+      font-size: 1.2em;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+      animation: fadeIn 5s ease-out forwards;
+    }
+    
+    #win .reload-hint {
+      margin-top: 20px;
+      font-size: 1em;
+      color: #ffd93d;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+    }
   </style>
 </head>
 <body>
@@ -145,36 +189,38 @@
     <div class="outputMap">???</div>
   </div>
 
-  <div id="menu">
-    <div class="menuItem">north</div>
-    <div class="menuItem">south</div>
-    <div class="menuItem">east</div>
-    <div class="menuItem">west</div>
-    <div class="menuItem">inspect</div>
-    <div class="menuItem">inventory</div>
-    <div class="menuItem">inspect [itemName]</div>
-    <div class="menuItem">give [itemName]</div>
-    <div class="menuItem">talk [npcName]</div>
-    <div class="menuItem">attack [npcName]</div>
+  <div class="middle-section">
+    <div id="menu">
+      <div class="menuItem">north</div>
+      <div class="menuItem">south</div>
+      <div class="menuItem">east</div>
+      <div class="menuItem">west</div>
+      <div class="menuItem">inspect</div>
+      <div class="menuItem">inventory</div>
+      <div class="menuItem">inspect [itemName]</div>
+      <div class="menuItem">give [itemName]</div>
+      <div class="menuItem">talk [npcName]</div>
+      <div class="menuItem">attack [npcName]</div>
+    </div>
+
+    <input type="text" id="nameInput" placeholder="Enter your name" autofocus />
+    <input type="text" id="command" placeholder="Enter your command" style="display:none;" />
   </div>
 
-  <input type="text" id="nameInput" placeholder="Enter your name" autofocus />
-  <input type="text" id="command" placeholder="Enter your command" style="display:none;" />
+  <div id="footer">
+    <pre>
+       .   ____          _            __ _ _
+      /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+     ( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+      \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+       '  |____| .__|_| |_|_| |_\__, | / / / /
+      =========|_|==============|___/=/_/_/_/
+      :: Spring Boot ::                (v3.2.5)
 
-<div id="footer">
-  <pre>
-     .   ____          _            __ _ _
-    /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
-   ( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
-    \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
-     '  |____| .__|_| |_|_| |_\__, | / / / /
-    =========|_|==============|___/=/_/_/_/
-    :: Spring Boot ::                (v3.2.5)
-
-    :: Alba Pläp Golfe ::
-    :: 2025 ::
-  </pre>
-</div>
+      :: Alba Pläp Golfe ::
+      :: 2025 ::
+    </pre>
+  </div>
 
 <div id="gameover">
   <pre>
@@ -184,6 +230,28 @@
 |_______|___|___|__|_|__|_______|    |_______|\\\___/|_______|___|\_|
 
     Your adventure ends here...
+    
+    <span id="death-cause"></span>
+    <span id="combat-status"></span>
+    
+    :: Spring Boot ::                (v3.2.5)
+    :: Alba Pläp Golfe ::
+    :: 2025 ::
+  </pre>
+  <div class="reload-hint">Reload website to play again!</div>
+</div>
+
+<div id="win">
+  <pre>
+ ___ ___ _______ _______      ________ _______ _______ __ 
+|   |   |       |   |   |    |  |  |  |_     _|    |  |  |
+ \     /|   -   |   |   |    |  |  |  |_|   |_|       |__|
+  |___| |_______|_______|    |________|_______|__|____|__|
+
+    Your game developer got tired and your adventure ends here for now...
+    Thank you for playing!
+    
+    <span id="win-message"></span>
     
     :: Spring Boot ::                (v3.2.5)
     :: Alba Pläp Golfe ::
@@ -198,8 +266,53 @@
     const nameInput = document.getElementById('nameInput');
     const commandInput = document.getElementById('command');
     
-    function showGameOver() {
+    function showGameOver(deathMessage = '', combatStatus = '') {
       document.getElementById('gameover').style.display = 'flex';
+      
+      // Display death cause if provided
+      const deathCauseElement = document.getElementById('death-cause');
+      if (deathMessage) {
+        deathCauseElement.textContent = deathMessage;
+        deathCauseElement.style.color = '#ff9999';
+        deathCauseElement.style.fontStyle = 'italic';
+        deathCauseElement.style.display = 'block';
+        deathCauseElement.style.marginBottom = '10px';
+      }
+      
+      // Display combat status if provided
+      const combatStatusElement = document.getElementById('combat-status');
+      if (combatStatus) {
+        combatStatusElement.textContent = combatStatus;
+        combatStatusElement.style.color = '#ffcc66';
+        combatStatusElement.style.fontFamily = 'monospace';
+        combatStatusElement.style.whiteSpace = 'pre-line';
+        combatStatusElement.style.display = 'block';
+        combatStatusElement.style.marginBottom = '15px';
+        combatStatusElement.style.fontSize = '0.9em';
+      }
+      
+      commandInput.disabled = true;
+      commandInput.style.display = 'none';
+      document.getElementById('menu').style.display = 'none';
+    }
+
+    function showWin(winMessage = '') {
+      document.getElementById('win').style.display = 'flex';
+      
+      // Display win message if provided
+      const winMessageElement = document.getElementById('win-message');
+      if (winMessage) {
+        winMessageElement.textContent = winMessage;
+        winMessageElement.style.color = '#90EE90';
+        winMessageElement.style.fontFamily = 'monospace';
+        winMessageElement.style.whiteSpace = 'pre-line';
+        winMessageElement.style.display = 'block';
+        winMessageElement.style.marginBottom = '15px';
+        winMessageElement.style.fontSize = '0.95em';
+        winMessageElement.style.textAlign = 'center';
+        winMessageElement.style.lineHeight = '1.4';
+      }
+      
       commandInput.disabled = true;
       commandInput.style.display = 'none';
       document.getElementById('menu').style.display = 'none';
@@ -252,7 +365,24 @@
         
         // Check if player died (game over)
         if (data.includes("GAME OVER")) {
-          showGameOver();
+          // Extract death cause if present
+          const deathCauseMatch = data.match(/DEATH_CAUSE: (.+)/);
+          const deathMessage = deathCauseMatch ? deathCauseMatch[1] : '';
+          
+          // Extract combat status if present
+          const combatStatusMatch = data.match(/COMBAT_STATUS: ([\s\S]*?)(?=\nGAME OVER|$)/);
+          const combatStatus = combatStatusMatch ? combatStatusMatch[1] : '';
+          
+          showGameOver(deathMessage, combatStatus);
+          return;
+        }
+        
+        // Check if player won
+        if (data.includes("YOU WIN")) {
+          // Extract win message if present
+          const winMessageMatch = data.match(/WIN_MESSAGE: ([\s\S]*?)(?=\nYOU WIN|$)/);
+          const winMessage = winMessageMatch ? winMessageMatch[1] : '';
+          showWin(winMessage);
           return;
         }
 

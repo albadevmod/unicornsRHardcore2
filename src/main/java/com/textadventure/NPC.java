@@ -9,6 +9,7 @@ public class NPC {
     int armor;
     int attackDamage;
     Boolean isHostile = false;
+    Item itemDrop;
 
     ArrayList <String> npcDialogue = new ArrayList<>();
     ArrayList <Quest> npcQuests = new ArrayList<>();
@@ -24,6 +25,10 @@ public class NPC {
         this.keyItems = keyItems;
     }
 
+    public void addItemDrop(Item item){
+        this.itemDrop = item;
+    }
+
     public void addNPCDialogue(String npcDialogueString){
         npcDialogue.add(npcDialogueString);
     }
@@ -34,6 +39,10 @@ public class NPC {
 
     public ArrayList <String> getNPCDialogue(){
         return npcDialogue;
+    }
+
+    public void setKeyItems(ArrayList<Item> keyItems){
+        this.keyItems = keyItems;
     }
 
     // if the enemy is hostlie but cannot be attacked (like a guard) and a special dialogue is needed for this case,

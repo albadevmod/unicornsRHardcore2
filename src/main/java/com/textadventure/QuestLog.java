@@ -120,5 +120,57 @@ public class QuestLog {
 
         foxChase.addQuestEvents(new ArrayList<QuestEvent>(Arrays.asList(introFoxChase, foxChaseStart , foxChaseMid, foxChaseEnd, foxSword)));
 
+        //////////////////////////////////////////////////////////////
+
+        Quest enterCity = new Quest("enterCity");
+        // response will be passed in from GameEventHandler
+        Chapter startChapterEnterCity = questTracker.currentLevel.getChapter("Sweetopolis Citygate South");
+        NPC guard = startChapterEnterCity.getChapterNPCByName("guard");
+
+        guard.npcQuests.add(enterCity);
+        questTracker.potentialQuests.add(enterCity);
+
+        enterCity.setStartCondition(() -> questTracker.gameEventHandler.activeChapter == startChapterEnterCity);
+        enterCity.setFinishCondition(() -> {
+            // Check if the last event in the quest is completed
+            QuestEvent lastEvent = enterCity.getCurrentEvent();
+            return lastEvent != null && lastEvent.eventCompleted;
+        });
+
+        QuestEvent enterCityWithHorsemask = new QuestEvent("enterCityWithHorsemask ", 1);
+        enterCityWithHorsemask.associatedChapter = startChapterEnterCity;
+        enterCityWithHorsemask.addEventText("-----------------------");
+        enterCityWithHorsemask.addEventText("Your new drip has the guards looking much more friendly now.");
+        enterCityWithHorsemask.addEventText("The guard nods approvingly and steps aside.");
+        enterCityWithHorsemask.addEventText("'Welcome to Sweetopolis, fellow horseman! The gates are now open to you.'");
+        enterCityWithHorsemask.addEventText("");
+        enterCityWithHorsemask.addEventText("*** QUEST COMPLETED: City Entry ***");
+        enterCityWithHorsemask.addEventText("WIN_MESSAGE: Your new drip has the guards looking much more friendly now.\nThe guard nods approvingly and steps aside.\n'Welcome to Sweetopolis, fellow horseman! The gates are now open to you.'\n\n*** QUEST COMPLETED: City Entry ***");
+        enterCityWithHorsemask.addEventText("YOU WIN!");
+        enterCityWithHorsemask.addEventText("-----------------------");
+        enterCityWithHorsemask.showTextAgain = true;
+        enterCityWithHorsemask.setStartCondition(() -> 
+            questTracker.gameEventHandler.lastAction.equalsIgnoreCase("talk guard") && 
+            questTracker.gameEventHandler.activeChapter == startChapterEnterCity &&
+            questTracker.gameEventHandler.player.getInventory().stream().anyMatch(item -> item.itemName.equalsIgnoreCase("horsemask"))
+        );
+        enterCityWithHorsemask.setOnStart(() -> {
+            enterCityWithHorsemask.eventStarted = true;
+            // event logic here
+            if (enterCityWithHorsemask.textShown == true){
+                enterCityWithHorsemask.eventCompleted = true;
+                // Quest completion logic  
+                enterCity.finishQuest();
+                questTracker.finishedQuests.add(enterCity);
+                guard.npcQuests.remove(enterCity);
+                System.out.println("Quest finished: " + enterCity.questName);
+            }
+            if (enterCityWithHorsemask.textShown && enterCityWithHorsemask.showTextAgain) {
+                enterCityWithHorsemask.textShown = false;
+            }
+        });
+
+        enterCity.addQuestEvents(new ArrayList<>(Arrays.asList(enterCityWithHorsemask)));
+
     }
 }

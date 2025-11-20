@@ -30,12 +30,14 @@ public class Book {
     Chapter cityOutskirtEast = new Chapter(player,"City Outskirt East", cottonCandyLand);
     Chapter willowTreeForest = new Chapter(player,"Willow Tree Forest", cottonCandyLand);
     Chapter cityOutskirtWest = new Chapter(player,"City Outskirt West", cottonCandyLand);
+    Chapter sweetopolisEntrySouth = new Chapter(player,"Sweetopolis Entry South", cottonCandyLand);
 
     Item fish = new Item("fish");
     // sword is now created dynamically in QuestLog.java during quest completion
+    Item horsemask = new Item("horsemask");
 
     NPC guard = new NPC("guard", 20, 5, 8);
-    NPC guyWithHorseMask = new NPC("guy", 20, 2, 8);
+    NPC guyWithHorseMask = new NPC("guy", 10, 0, 4);
     NPC frog = new NPC("froggy", 5, 0, 0);
     NPC fox = new NPC("fox", 10, 0, 0);
 
@@ -65,7 +67,8 @@ public class Book {
         sweetopolisCityGateSouth.addStoryText("A guard is stationed at the gates. He is standing upright, walking on two hooves and has the head of a horse.");
 
         sweetopolisCityGateSouth.addNPCsToChapter(new ArrayList<NPC>(Arrays.asList(guard)));
-        gameEventHandler.dialogueManager.addBasicDialogue(guard, new ArrayList<>(Arrays.asList("NO HUMANS ALLOWED!", "get away, pescy human!", "don't bother me.")));
+        gameEventHandler.dialogueManager.addBasicDialogue(guard, new ArrayList<>(Arrays.asList("NO HUMANS ALLOWED!", "get away, pesky human!", "don't bother me.")));
+        gameEventHandler.dialogueManager.addInventoryDialogue(guard, Map.of(horsemask, "Hello fellow horseman! You may pass."));
         gameEventHandler.dialogueManager.addInventoryDialogue(guard, Map.of(fish, "you stink!"));
 
 
@@ -77,8 +80,11 @@ public class Book {
         fish.addItemDescription("You slipped it right into your pocket. It stinks.");
         fish.onGround = true;
 
-        fox.keyItems.add(fish);
+        fox.setKeyItems(new ArrayList<>(Arrays.asList(fish)));
         fish.questItem = true;
+
+        guard.setKeyItems(new ArrayList<>(Arrays.asList(horsemask)));
+        horsemask.addItemDescription("You couldn't wait and put it on immediately. It smells like bad breath in here ...");
         
         // Note: sword is created during quest completion, not placed in world
         // willowTreeForest.addItem(sword); // REMOVED - sword only appears through quest
@@ -107,6 +113,7 @@ public class Book {
 
         cityOutskirtWest.addNPCsToChapter(new ArrayList<NPC>(Arrays.asList(guyWithHorseMask)));
         guyWithHorseMask.isHostile = true;
+        guyWithHorseMask.addItemDrop(horsemask);
         gameEventHandler.dialogueManager.addBasicDialogue(guyWithHorseMask, new ArrayList<>(Arrays.asList("He glares at you through the eye holes of his horse mask.", "He doesn't seem friendly ...")));
         cityOutskirtWest.addStoryText("------------------------------------------");
         cityOutskirtWest.addStoryText("The cotton candy strands in the air seem less dense here. The blue sky is clearly visible above you.");

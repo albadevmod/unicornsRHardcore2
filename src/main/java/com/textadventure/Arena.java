@@ -75,15 +75,6 @@ public class Arena{
         return returnString;
     }
 
-    public String checkEnemyHealth(NPC enemyNPC){
-        if (enemyNPC.health <= 0){
-            combatStarted = false;
-            return enemyNPC.npcName + " has been defeated!";
-        } else {
-            return "The struggle continues...";
-        }
-    }
-
     public String checkPlayerHealth(Player player){
         if (player.health <= 0){
             combatStarted = false;
@@ -93,16 +84,28 @@ public class Arena{
         }
     }
 
+    public String receiveItemDropUponVictory(NPC enemyNPC){
+        if (enemyNPC.itemDrop != null){
+            player.addItemToInventory(enemyNPC.itemDrop);
+            return enemyNPC.npcName + " dropped " + enemyNPC.itemDrop.itemName + ". It has been added to your inventory.";
+        }
+        return enemyNPC.npcName + " left nothing behind.";
+    }
+
     private String executeCombatAction(String action, StringBuilder response) {
         switch (action) {
             case "poke":
                 response.append(hitEnemy(player, enemyNPC)).append("\n");
-                if (isCombatOver()) return response.append("You poke the enemies eye out and claim victory!").toString();
+                if (enemyNPC.health <= 0) {
+                    return handleVictory("You poke the enemies eye out and claim victory!");
+                }
                 response.append(takeDamage(player, enemyNPC)).append("\n");
                 break;
             case "flail arms":
                 response.append(flailArms(enemyNPC)).append("\n");
-                if (isCombatOver()) return response.append("You defeat your enemy by a thousand bleeding cuts.").toString();
+                if (enemyNPC.health <= 0) {
+                    return handleVictory("You defeat your enemy by a thousand bleeding cuts.");
+                }
                 response.append(takeDamage(player, enemyNPC)).append("\n");
                 break;
             case "push kick":
@@ -118,22 +121,34 @@ public class Arena{
                 return response.toString();
         }
         
-        // Check if combat ended after taking damage
-        if (isCombatOver()) return response.append("\n\nGAME OVER.").toString();
+        // Check if player died after taking damage
+        if (player.health <= 0) {
+            combatStarted = false;
+            // Extract the last damage message
+            String[] lines = response.toString().split("\n");
+            String deathCause = lines.length > 0 ? lines[lines.length - 1] : "You have been defeated!";
+            
+            // Build combat status for game over screen
+            String combatStatus = "--- Final Combat Status ---\n" +
+                                player.getPlayerName() + " HP: " + player.health + "\n" +
+                                enemyNPC.npcName + " HP: " + enemyNPC.health;
+            
+            return response.append("\n\nYou have fallen in combat!\n")
+                          .append("DEATH_CAUSE: ").append(deathCause).append("\n")
+                          .append("COMBAT_STATUS: ").append(combatStatus).append("\n")
+                          .append("GAME OVER.").toString();
+        }
         
         return null; // Combat continues
     }
     
-    private boolean isCombatOver() {
-        if (enemyNPC.health <= 0) {
-            combatStarted = false;
-            return true;
-        }
-        if (player.health <= 0) {
-            combatStarted = false;
-            return true;
-        }
-        return false;
+    private String handleVictory(String victoryMessage) {
+        StringBuilder response = new StringBuilder();
+        combatStarted = false;
+        enemyNPC.isHostile = false;
+        response.append(victoryMessage).append("\n");
+        response.append(receiveItemDropUponVictory(enemyNPC));
+        return response.toString();
     }
     
     private void appendCombatStatus(StringBuilder response) {
