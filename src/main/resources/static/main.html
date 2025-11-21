@@ -55,6 +55,29 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      position: relative;
+    }
+    
+    .player-marker {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 50px;
+      color: #c75252;
+      text-shadow: 
+        -1px -1px 0 #fff,
+        1px -1px 0 #fff,
+        -1px 1px 0 #fff,
+        1px 1px 0 #fff,
+        -2px 0 0 #fff,
+        2px 0 0 #fff,
+        0 -2px 0 #fff,
+        0 2px 0 #fff;
+      z-index: 1000;
+      display: none;
+      transition: all 0.3s ease;
+      pointer-events: none;
     }
     .middle-section {
       display: flex;
@@ -186,7 +209,10 @@
     This is your first step into a strange adventure.
     What is your name?
   </div>
-    <div class="outputMap">???</div>
+    <div class="outputMap">
+      <span class="player-marker" id="playerMarker">♞</span>
+      ???
+    </div>
   </div>
 
   <div class="middle-section">
@@ -265,6 +291,39 @@
     const outputMap = document.querySelector('.outputMap');
     const nameInput = document.getElementById('nameInput');
     const commandInput = document.getElementById('command');
+    const playerMarker = document.getElementById('playerMarker');
+    
+    // Function to position player marker based on chapter name
+    function positionPlayerMarker(chapterName) {
+      const marker = document.getElementById('playerMarker');
+      if (!marker) return;
+      
+      console.log('Positioning marker for chapter:', chapterName);
+      
+      // Define positions as percentages of the map area (3x3 grid)
+      const positions = {
+        'City Outskirt South': { top: '83%', left: '50%' },     // bottom mid
+        'City Outskirt South East': { top: '83%', left: '83%' }, // bottom right
+        'City Outskirt South West': { top: '83%', left: '17%' }, // bottom left
+        'City Outskirt East': { top: '50%', left: '83%' },      // mid right
+        'City Outskirt West': { top: '50%', left: '17%' },       // mid left
+        'Sweetopolis Citygate South': { top: '62%', left: '50%' },
+        'Willow Tree Forest': { top: '47%', left: '99%' }
+      };
+      
+      if (positions[chapterName]) {
+        console.log('Found position for', chapterName, positions[chapterName]);
+        marker.style.top = positions[chapterName].top;
+        marker.style.left = positions[chapterName].left;
+        marker.style.transform = 'translate(-50%, -50%)';
+      } else {
+        console.log('No specific position for', chapterName, '- using center');
+        // Default center position for unknown chapters
+        marker.style.top = '50%';
+        marker.style.left = '50%';
+        marker.style.transform = 'translate(-50%, -50%)';
+      }
+    }
     
     function showGameOver(deathMessage = '', combatStatus = '') {
       document.getElementById('gameover').style.display = 'flex';
@@ -340,6 +399,37 @@
         const introText = await res.text();
         output.textContent += `\n${introText}`;
         output.scrollTop = output.scrollHeight;
+        
+        // Fetch initial map info and position marker
+        fetch('http://localhost:8080/mapinfo', {
+          method: 'POST'
+        })
+        .then(response => response.text())
+        .then(mapInfo => {
+          console.log('Initial map info:', mapInfo);
+          const [mapBackground, chapterName] = mapInfo.split('|');
+          
+          if (mapBackground.startsWith("#")) {
+            // No map available - show ??? and hide player marker
+            outputMap.style.background = mapBackground;
+            outputMap.innerHTML = '<span class="player-marker" id="playerMarker">♞</span>???';
+            document.getElementById('playerMarker').style.display = 'none';
+          } else {
+            // Map is available - show map and player marker
+            outputMap.style.background = `url(${mapBackground})`;
+            outputMap.style.backgroundSize = "cover";
+            outputMap.style.backgroundPosition = "center";
+            outputMap.innerHTML = '<span class="player-marker" id="playerMarker">♞</span>';
+            const marker = document.getElementById('playerMarker');
+            marker.style.display = 'block';
+            
+            // Position the marker based on current chapter
+            positionPlayerMarker(chapterName);
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching initial map info:', error);
+        });
       }
     });
 
@@ -386,21 +476,32 @@
           return;
         }
 
-      fetch('http://localhost:8080/map', {
+      fetch('http://localhost:8080/mapinfo', {
         method: 'POST'
       })
       .then(response => response.text())
-      .then(mapBackground => {
+      .then(mapInfo => {
+        console.log('Command map info:', mapInfo);
+        const [mapBackground, chapterName] = mapInfo.split('|');
+        
         if (mapBackground.startsWith("#")) {
+          // No map available - show ??? and hide player marker
           outputMap.style.background = mapBackground;
-          outputMap.textContent = "???";
+          outputMap.innerHTML = '<span class="player-marker" id="playerMarker">♞</span>???';
+          document.getElementById('playerMarker').style.display = 'none';
         } else {
+          // Map is available - show map and player marker
           outputMap.style.background = `url(${mapBackground})`;
           outputMap.style.backgroundSize = "cover";
           outputMap.style.backgroundPosition = "center";
-          outputMap.textContent = ""; // remove ??? text
-          }
-        });
+          outputMap.innerHTML = '<span class="player-marker" id="playerMarker">♞</span>';
+          const marker = document.getElementById('playerMarker');
+          marker.style.display = 'block';
+          
+          // Position the marker based on current chapter
+          positionPlayerMarker(chapterName);
+        }
+      });
       })
 
       .catch(error => {

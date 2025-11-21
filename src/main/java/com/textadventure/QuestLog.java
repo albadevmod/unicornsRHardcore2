@@ -130,7 +130,8 @@ public class QuestLog {
         guard.npcQuests.add(enterCity);
         questTracker.potentialQuests.add(enterCity);
 
-        enterCity.setStartCondition(() -> questTracker.gameEventHandler.activeChapter == startChapterEnterCity);
+        enterCity.setStartCondition(() -> questTracker.gameEventHandler.activeChapter == startChapterEnterCity 
+            && questTracker.gameEventHandler.player.getInventory().stream().anyMatch(item -> item.itemName.equalsIgnoreCase("horsemask")));
         enterCity.setFinishCondition(() -> {
             // Check if the last event in the quest is completed
             QuestEvent lastEvent = enterCity.getCurrentEvent();
@@ -142,10 +143,10 @@ public class QuestLog {
         enterCityWithHorsemask.addEventText("-----------------------");
         enterCityWithHorsemask.addEventText("Your new drip has the guards looking much more friendly now.");
         enterCityWithHorsemask.addEventText("The guard nods approvingly and steps aside.");
-        enterCityWithHorsemask.addEventText("'Welcome to Sweetopolis, fellow horseman! The gates are now open to you.'");
+        enterCityWithHorsemask.addEventText("'Welcome to Sweetopolis, fellow horseman! The gates are open to you.'");
         enterCityWithHorsemask.addEventText("");
         enterCityWithHorsemask.addEventText("*** QUEST COMPLETED: City Entry ***");
-        enterCityWithHorsemask.addEventText("WIN_MESSAGE: Your new drip has the guards looking much more friendly now.\nThe guard nods approvingly and steps aside.\n'Welcome to Sweetopolis, fellow horseman! The gates are now open to you.'\n\n*** QUEST COMPLETED: City Entry ***");
+        enterCityWithHorsemask.addEventText("WIN_MESSAGE: Your new drip has the guards looking much more friendly now.\nThe guard nods approvingly and steps aside.\n'Welcome to Sweetopolis, fellow horseman! The gates are open to you.'\n\n*** QUEST COMPLETED: City Entry ***");
         enterCityWithHorsemask.addEventText("YOU WIN!");
         enterCityWithHorsemask.addEventText("-----------------------");
         enterCityWithHorsemask.showTextAgain = true;

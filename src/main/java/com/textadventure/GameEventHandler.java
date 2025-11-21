@@ -75,9 +75,16 @@ public class GameEventHandler {
             if (currentNPC != null && !currentNPC.npcQuests.isEmpty()){
                 questTracker.checkAndTriggerQuestEventsForNPC(currentNPC);
                 String questText = questTracker.getQuestEventTextForNPC(currentNPC);
-                response.append(questText);
-                questTracker.completeAndAdvanceShownEventsForNPC(currentNPC);
-                System.out.println("Talk used, Quests updated for NPC: " + currentNPC.npcName);
+                if (!questText.trim().isEmpty()) {
+                    // Quest event was triggered, show quest text
+                    response.append(questText);
+                    questTracker.completeAndAdvanceShownEventsForNPC(currentNPC);
+                    System.out.println("Talk used, Quests updated for NPC: " + currentNPC.npcName);
+                } else {
+                    // No quest event triggered, use normal dialogue
+                    response.append(dialogueManager.talkToNPC(currentNPC));
+                    System.out.println("Normal dialogue cued - no active quest events.");
+                }
             }
             else if (currentNPC != null){
                 response.append(dialogueManager.talkToNPC(currentNPC));

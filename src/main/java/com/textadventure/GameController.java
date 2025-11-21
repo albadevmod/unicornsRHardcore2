@@ -31,6 +31,21 @@ public class GameController {
         return "#2b2b2b";
     }
     
+    @PostMapping("/mapinfo")
+    public String getMapInfo() {
+        Level currentLevel = Game.gameEventHandler.activeChapter.getAssociatedLevel();
+        String chapterName = Game.gameEventHandler.activeChapter.chapterName;
+        
+        if (currentLevel == null) return "#2b2b2b|unknown"; // fallback
+
+        Player player = Game.player;
+        if (player.hasMapForLevel(currentLevel)) {
+            String mapUrl = currentLevel.getLevelMap().getImageDir();
+            return mapUrl + "|" + chapterName;
+        }
+        return "#2b2b2b|" + chapterName;
+    }
+    
     @PostMapping("/gameover")
     public String isGameOver() {
         return String.valueOf(Game.player.isDead());

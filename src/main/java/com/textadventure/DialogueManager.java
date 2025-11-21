@@ -64,8 +64,11 @@ public class DialogueManager {
     public String checkInventoryDialogue(){
         if (inventoryDialogues.containsKey(currentNPC)) {
             for(Map.Entry<Item, String> entry : inventoryDialogues.get(currentNPC).entrySet()){
-                if (player.getInventory().contains(entry.getKey())){
-                    return entry.getValue();
+                // Check if player has an item with the same name as the key item
+                for (Item playerItem : player.getInventory()) {
+                    if (playerItem.itemName.equalsIgnoreCase(entry.getKey().itemName)) {
+                        return entry.getValue();
+                    }
                 }
             }
         }

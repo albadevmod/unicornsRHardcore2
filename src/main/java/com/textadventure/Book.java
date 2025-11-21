@@ -37,7 +37,7 @@ public class Book {
     Item horsemask = new Item("horsemask");
 
     NPC guard = new NPC("guard", 20, 5, 8);
-    NPC guyWithHorseMask = new NPC("guy", 10, 0, 4);
+    NPC manWithHorseMask = new NPC("man", 10, 0, 4);
     NPC frog = new NPC("froggy", 5, 0, 0);
     NPC fox = new NPC("fox", 10, 0, 0);
 
@@ -111,10 +111,10 @@ public class Book {
         cityOutskirtSouthWest.addStoryText("Flanking the gates, they are made of hardened nougat and reinforced with chocolate bricks.");
         cityOutskirtSouthWest.addStoryText("The textures are rich and irregular, giving them the appearance of an impenetrable fortress, albeit a sweet one.");
 
-        cityOutskirtWest.addNPCsToChapter(new ArrayList<NPC>(Arrays.asList(guyWithHorseMask)));
-        guyWithHorseMask.isHostile = true;
-        guyWithHorseMask.addItemDrop(horsemask);
-        gameEventHandler.dialogueManager.addBasicDialogue(guyWithHorseMask, new ArrayList<>(Arrays.asList("He glares at you through the eye holes of his horse mask.", "He doesn't seem friendly ...")));
+        cityOutskirtWest.addNPCsToChapter(new ArrayList<NPC>(Arrays.asList(manWithHorseMask)));
+        manWithHorseMask.isHostile = true;
+        manWithHorseMask.addItemDrop(horsemask);
+        gameEventHandler.dialogueManager.addBasicDialogue(manWithHorseMask, new ArrayList<>(Arrays.asList("He glares at you through the eye holes of his horse mask.", "He doesn't seem friendly ...")));
         cityOutskirtWest.addStoryText("------------------------------------------");
         cityOutskirtWest.addStoryText("The cotton candy strands in the air seem less dense here. The blue sky is clearly visible above you.");
         cityOutskirtWest.addStoryText("Swaying in the breeze, candy flowers made of sugar glass shimmer in the sunlight, climpering softly when touching each other.");
