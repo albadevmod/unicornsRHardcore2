@@ -81,9 +81,11 @@ public class Book {
         fish.onGround = true;
 
         fox.setKeyItems(new ArrayList<>(Arrays.asList(fish)));
+        fox.setGetsAttackedDialogue("The fox is swift and quick, it disappears into the undergrowth.");
         fish.questItem = true;
 
         guard.setKeyItems(new ArrayList<>(Arrays.asList(horsemask)));
+        guard.setGameOverUponAttacking(true);
         horsemask.addItemDescription("You couldn't wait and put it on immediately. It smells like bad breath in here ...");
         
         // Note: sword is created during quest completion, not placed in world

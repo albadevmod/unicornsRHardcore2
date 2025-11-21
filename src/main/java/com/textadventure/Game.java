@@ -43,7 +43,15 @@ public class Game {
     }
 
     public static String handleInput(String input) {
-        return gameEventHandler.processInput(input);
+        try {
+            if (gameEventHandler == null) {
+                return "Game error: Handler is null. Please reload the page.";
+            }
+            return gameEventHandler.processInput(input);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Game error occurred: " + e.getMessage() + ". Please reload the page.";
+        }
     }
 
 }

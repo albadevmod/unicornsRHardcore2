@@ -9,11 +9,14 @@ public class NPC {
     int armor;
     int attackDamage;
     Boolean isHostile = false;
+    Boolean gameOverUponAttacking = false;
     Item itemDrop;
 
     ArrayList <String> npcDialogue = new ArrayList<>();
     ArrayList <Quest> npcQuests = new ArrayList<>();
     ArrayList<Item> keyItems = new ArrayList<>();
+
+    String getsAttackedDialogue;
 
     public NPC(){};
 
@@ -45,10 +48,32 @@ public class NPC {
         this.keyItems = keyItems;
     }
 
-    // if the enemy is hostlie but cannot be attacked (like a guard) and a special dialogue is needed for this case,
-    // this is the method to call
-    public String getsAttacked(String string){
-        return string;
+    // if the enemy is not hostile queue this dialogue
+    public String getsAttacked(){
+        if (this.gameOverUponAttacking == true){
+            return "As you attack " + npcName + ", they step backwards quickly and sound the alarm!\n\n" +
+                   "A hot stream of chocolate ganache is spilled from atop the tower, cooking you alive as it pours over you!\n\n" +
+                   "You have been defeated by the authorities!\n\n" +
+                   "Your chocolate charred flesh will not be remembered.\n" +
+                   "GAME OVER";
+        } else {
+            return this.getAttackedDialogue();
+        }
+    }
+
+    public void setGetsAttackedDialogue(String dialogue){
+        this.getsAttackedDialogue = dialogue;
+    }
+
+    public String getAttackedDialogue(){
+        if (getsAttackedDialogue == null) {
+            return "The " + npcName + " seems unimpressed by your attack.";
+        }
+        return getsAttackedDialogue;
+    }
+
+    public void setGameOverUponAttacking(Boolean gameOverUponAttacking){
+        this.gameOverUponAttacking = gameOverUponAttacking;
     }
 
 }

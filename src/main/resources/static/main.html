@@ -455,15 +455,8 @@
         
         // Check if player died (game over)
         if (data.includes("GAME OVER")) {
-          // Extract death cause if present
-          const deathCauseMatch = data.match(/DEATH_CAUSE: (.+)/);
-          const deathMessage = deathCauseMatch ? deathCauseMatch[1] : '';
-          
-          // Extract combat status if present
-          const combatStatusMatch = data.match(/COMBAT_STATUS: ([\s\S]*?)(?=\nGAME OVER|$)/);
-          const combatStatus = combatStatusMatch ? combatStatusMatch[1] : '';
-          
-          showGameOver(deathMessage, combatStatus);
+          // Show the full game over message instead of just extracting death cause
+          showGameOver(data.replace(/\n> .*/g, '').trim(), '');
           return;
         }
         

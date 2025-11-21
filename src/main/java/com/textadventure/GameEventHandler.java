@@ -108,7 +108,13 @@ public class GameEventHandler {
             } else if (player.weapon == null) {
                 response.append("You have no weapon. What are you trying to do?");
             } else if (!currentNPC.isHostile) {
-                response.append("They don't seem to care whatsoever.");
+                String attackResult = currentNPC.getsAttacked();
+                response.append(attackResult);
+                // Check if it was a game over attack
+                if (attackResult != null && attackResult.contains("GAME OVER")) {
+                    // Set player as dead to prevent further processing
+                    player.health = 0;
+                }
             } else {
                 // currentNPC != null && currentNPC.isHostile && player.weapon != null
                 arena.enemyNPC = currentNPC; // Set the enemy NPC in arena
