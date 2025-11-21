@@ -41,7 +41,7 @@ public class Book {
 
     NPC guard = new NPC("guard", 20, 5, 8);
     NPC manWithHorseMask = new NPC("man", 12, 1, 5);
-    NPC frog = new NPC("froggy", 5, 0, 0);
+    NPC toad = new NPC("toad", 20, 20, 10);
     NPC fox = new NPC("fox", 10, 0, 0);
 
     public void createBook(){
@@ -128,6 +128,11 @@ public class Book {
         cityOutskirtWest.addStoryText("Swaying in the breeze, candy flowers made of sugar glass shimmer in the sunlight, climpering softly when touching each other.");
         cityOutskirtWest.addStoryText("Within the bright specs of red, yellow and violet, stands a ... naked man with a horse mask. Menacing.");
         cityOutskirtWest.addStoryText("------------------------------------------");
+
+        cityOutskirtNorthWest.addStoryText("The flowers climper more intensely here, their sugary petals chiming melodiously in the gentle breeze.");
+        cityOutskirtNorth.addStoryText("You can see a few guards in the distance, patrolling atop the city walls. A big tower spirals upwards from within the city center.");
+        cityOutskirtNorthEast.addStoryText("A giant ");
+
         
     }
 }
