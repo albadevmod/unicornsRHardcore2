@@ -37,7 +37,7 @@ public class Book {
     Item horsemask = new Item("horsemask");
 
     NPC guard = new NPC("guard", 20, 5, 8);
-    NPC manWithHorseMask = new NPC("man", 10, 0, 4);
+    NPC manWithHorseMask = new NPC("man", 12, 1, 5);
     NPC frog = new NPC("froggy", 5, 0, 0);
     NPC fox = new NPC("fox", 10, 0, 0);
 

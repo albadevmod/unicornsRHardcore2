@@ -134,7 +134,6 @@ public class Arena{
                                 enemyNPC.npcName + " HP: " + enemyNPC.health;
             
             return response.append("\n\nYou have fallen in combat!\n")
-                          .append("DEATH_CAUSE: ").append(deathCause).append("\n")
                           .append("COMBAT_STATUS: ").append(combatStatus).append("\n")
                           .append("GAME OVER.").toString();
         }
