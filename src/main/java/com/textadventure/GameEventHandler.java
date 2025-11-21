@@ -103,7 +103,14 @@ public class GameEventHandler {
                     break;
                 }
             }
-            if (currentNPC != null && currentNPC.isHostile && player.weapon != null) {
+            if (currentNPC == null) {
+                response.append("There's no one here by that name to attack.");
+            } else if (player.weapon == null) {
+                response.append("You have no weapon. What are you trying to do?");
+            } else if (!currentNPC.isHostile) {
+                response.append("They don't seem to care whatsoever.");
+            } else {
+                // currentNPC != null && currentNPC.isHostile && player.weapon != null
                 arena.enemyNPC = currentNPC; // Set the enemy NPC in arena
                 arena.combatStarted = true;
                 response.append(arena.initiateCombat(player, currentNPC));
@@ -111,12 +118,6 @@ public class GameEventHandler {
                 response.append("\nA fight ensues!");
                 response.append("\n\nEnter your combat action (poke, flail arms, push kick, intimidate)");
                 System.out.println("Combat initiated with NPC: " + currentNPC.npcName);
-            } else if (player.weapon == null) {
-                response.append("You have no weapon. What are you trying to do?");
-            } else if (currentNPC.isHostile == false) {
-                response.append("They don't seem to care whatsoever.");
-            }else {
-                response.append("There's no one here by that name to attack.");
             }
         } else {
             response.append("Invalid input. You did a backflip. Try again.");

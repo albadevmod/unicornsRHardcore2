@@ -211,7 +211,7 @@
   </div>
     <div class="outputMap">
       <span class="player-marker" id="playerMarker">♞</span>
-      ???
+      no map available for this area
     </div>
   </div>
 
@@ -410,9 +410,9 @@
           const [mapBackground, chapterName] = mapInfo.split('|');
           
           if (mapBackground.startsWith("#")) {
-            // No map available - show ??? and hide player marker
+            // No map available - show no map available for this area and hide player marker
             outputMap.style.background = mapBackground;
-            outputMap.innerHTML = '<span class="player-marker" id="playerMarker">♞</span>???';
+            outputMap.innerHTML = '<span class="player-marker" id="playerMarker">♞</span>no map available for this area';
             document.getElementById('playerMarker').style.display = 'none';
           } else {
             // Map is available - show map and player marker
@@ -485,9 +485,9 @@
         const [mapBackground, chapterName] = mapInfo.split('|');
         
         if (mapBackground.startsWith("#")) {
-          // No map available - show ??? and hide player marker
+          // No map available - show no map available for this area and hide player marker
           outputMap.style.background = mapBackground;
-          outputMap.innerHTML = '<span class="player-marker" id="playerMarker">♞</span>???';
+          outputMap.innerHTML = '<span class="player-marker" id="playerMarker">♞</span>no map available for this area';
           document.getElementById('playerMarker').style.display = 'none';
         } else {
           // Map is available - show map and player marker
