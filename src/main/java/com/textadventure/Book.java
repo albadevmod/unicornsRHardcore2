@@ -31,6 +31,9 @@ public class Book {
     Chapter willowTreeForest = new Chapter(player,"Willow Tree Forest", cottonCandyLand);
     Chapter cityOutskirtWest = new Chapter(player,"City Outskirt West", cottonCandyLand);
     Chapter sweetopolisEntrySouth = new Chapter(player,"Sweetopolis Entry South", cottonCandyLand);
+    Chapter cityOutskirtNorthWest = new Chapter(player,"City Outskirt North West", cottonCandyLand);
+    Chapter cityOutskirtNorthEast = new Chapter(player,"City Outskirt North East", cottonCandyLand);
+    Chapter cityOutskirtNorth = new Chapter(player,"City Outskirt North", cottonCandyLand);
 
     Item fish = new Item("fish");
     // sword is now created dynamically in QuestLog.java during quest completion
@@ -53,9 +56,12 @@ public class Book {
         sweetopolisCityGateSouth.addNextChapters(null, null, cityOutskirtSouth, null);
         cityOutskirtSouthEast.addNextChapters(cityOutskirtEast, null, null, cityOutskirtSouth);
         cityOutskirtSouthWest.addNextChapters(cityOutskirtWest, cityOutskirtSouth, null, null);
-        cityOutskirtWest.addNextChapters(null, null, cityOutskirtSouthWest, null);
-        cityOutskirtEast.addNextChapters(null, willowTreeForest, cityOutskirtSouthEast, null);
+        cityOutskirtWest.addNextChapters(cityOutskirtNorthWest, null, cityOutskirtSouthWest, null);
+        cityOutskirtEast.addNextChapters(cityOutskirtNorthEast, willowTreeForest, cityOutskirtSouthEast, null);
         willowTreeForest.addNextChapters(null, null, null, cityOutskirtEast);
+        cityOutskirtNorthWest.addNextChapters(null, cityOutskirtNorth, cityOutskirtWest, null);
+        cityOutskirtNorthEast.addNextChapters(null, null, cityOutskirtEast, cityOutskirtNorth);
+        cityOutskirtNorth.addNextChapters(null, cityOutskirtNorthEast, null, cityOutskirtNorthWest);
 
         /********************************************
         *             CityGateSouth                 *
