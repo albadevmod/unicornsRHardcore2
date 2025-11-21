@@ -41,7 +41,7 @@ public class GameEventHandler {
         if (inputString.equals("north") || inputString.equals("south") ||
             inputString.equals("west") || inputString.equals("east")) {
             if(activeChapter.nextChapters.get(inputString) == null){
-                response.append("You can't go that way.");
+                response.append("The path is blocked.");
             } else {
                 response.append(movePlayer(inputString));
             }
