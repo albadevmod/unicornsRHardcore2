@@ -41,7 +41,7 @@ public class Book {
     Item candyflowers = new Item("candyflowers");
 
     NPC guard = new NPC("guard", 20, 5, 8);
-    NPC manWithHorseMask = new NPC("man", 12, 1, 6);
+    NPC manWithHorseMask = new NPC("man", 15, 1, 8);
     NPC toad = new NPC("toad", 20, 20, 10);
     NPC fox = new NPC("fox", 10, 0, 0);
 
