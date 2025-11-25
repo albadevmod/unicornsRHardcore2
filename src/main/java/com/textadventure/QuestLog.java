@@ -157,7 +157,7 @@ public class QuestLog {
                 if (getArmor.textShown == true){
                     getArmor.eventCompleted = true;
                     // Get armor 
-                    Armor candyarmor = new Armor("candyarmor", 3);
+                    Armor candyarmor = new Armor("candyarmor", 5);
                     candyarmor.addItemDescription("Three pieces of thick sugar glass armor of multiple layered caramel plates that protect your shoulders and chest. Stylish and edible!");
                     questTracker.gameEventHandler.player.addItemToInventory(candyarmor);
                     questTracker.gameEventHandler.player.armor = candyarmor;

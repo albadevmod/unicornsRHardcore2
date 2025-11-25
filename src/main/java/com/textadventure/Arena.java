@@ -47,6 +47,7 @@ public class Arena{
             armorValue = ((Armor) player.armor).armorValue;
         }
         int reducedDamage = Math.max(0, damage - armorValue);
+        System.out.println("[DEBUG] Enemy damage: " + damage + ", Player armor: " + armorValue + ", Reduced damage: " + reducedDamage);
         player.health -= reducedDamage;
         if (reducedDamage <= 6) {
             return enemyNPC.npcName + " dealt " + reducedDamage + " damage to " + player.getPlayerName() + "!";
