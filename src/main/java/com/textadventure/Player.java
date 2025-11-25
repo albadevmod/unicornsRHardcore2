@@ -12,6 +12,7 @@ public class Player {
     int stamina;
     Item item;
     Item weapon;
+    Item armor;
 
     ArrayList<String> playerDialogue = new ArrayList<>();
     ArrayList<Item> inventory = new ArrayList<>();

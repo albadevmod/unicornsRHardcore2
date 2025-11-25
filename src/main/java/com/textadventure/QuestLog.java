@@ -121,6 +121,60 @@ public class QuestLog {
         foxChase.addQuestEvents(new ArrayList<QuestEvent>(Arrays.asList(introFoxChase, foxChaseStart , foxChaseMid, foxChaseEnd, foxSword)));
 
         //////////////////////////////////////////////////////////////
+        /// 
+        Quest toadQuest = new Quest("toadQuest");
+        // response will be passed in from GameEventHandler
+        Chapter startChapterToadQuest= questTracker.currentLevel.getChapter("City Outskirt North East");
+        NPC toad = startChapterToadQuest.getChapterNPCByName("toad");
+
+        toad.npcQuests.add(toadQuest);
+        questTracker.potentialQuests.add(toadQuest);
+
+        toadQuest.setStartCondition(() -> questTracker.gameEventHandler.activeChapter == startChapterToadQuest 
+            && questTracker.gameEventHandler.player.getInventory().stream().anyMatch(item -> item.itemName.equalsIgnoreCase("candyflowers")));
+        toadQuest.setFinishCondition(() -> {
+            // Check if the last event in the quest is completed
+            QuestEvent lastEvent = toadQuest.getCurrentEvent();
+            return lastEvent != null && lastEvent.eventCompleted;
+        });
+
+        QuestEvent getArmor = new QuestEvent("getArmor", 1);
+        getArmor.associatedChapter = startChapterToadQuest;
+        getArmor.addEventText("-----------------------");
+        getArmor.addEventText("Hmmm ... are those candyflowers for me? You throw the candyflowers into the giant toad's mouth.");
+        getArmor.addEventText("A nice sunny spot and candyflowers - have this piece of armor as a token of my gratitude!");
+        getArmor.addEventText("You equip the armor.");
+        getArmor.addEventText("-----------------------");
+        getArmor.showTextAgain = true;
+        getArmor.setStartCondition(() -> 
+            questTracker.gameEventHandler.lastAction != null &&
+            questTracker.gameEventHandler.lastAction.toLowerCase().contains("give candyflowers") && 
+            questTracker.gameEventHandler.activeChapter == startChapterToadQuest
+        );
+            getArmor.setOnStart(() -> {
+                getArmor.eventStarted = true;
+                // event logic here
+                if (getArmor.textShown == true){
+                    getArmor.eventCompleted = true;
+                    // Get armor 
+                    Armor candyarmor = new Armor("candyarmor", 3);
+                    candyarmor.addItemDescription("Three pieces of thick sugar glass armor of multiple layered caramel plates that protect your shoulders and chest. Stylish and edible!");
+                    questTracker.gameEventHandler.player.addItemToInventory(candyarmor);
+                    questTracker.gameEventHandler.player.armor = candyarmor;
+                    // complete quest
+                    toadQuest.finishQuest();
+                    questTracker.finishedQuests.add(toadQuest);
+                    toad.npcQuests.remove(toadQuest);
+                    System.out.println("Quest finished: " + toadQuest.questName);
+                }
+                if (getArmor.textShown && getArmor.showTextAgain) {
+                    getArmor.textShown = false;
+                }
+            });
+
+        toadQuest.addQuestEvents(new ArrayList<>(Arrays.asList(getArmor)));
+        
+        //////////////////////////////////////////////////////////////
 
         Quest enterCity = new Quest("enterCity");
         // response will be passed in from GameEventHandler

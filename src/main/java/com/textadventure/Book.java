@@ -38,15 +38,16 @@ public class Book {
     Item fish = new Item("fish");
     // sword is now created dynamically in QuestLog.java during quest completion
     Item horsemask = new Item("horsemask");
+    Item candyflowers = new Item("candyflowers");
 
     NPC guard = new NPC("guard", 20, 5, 8);
-    NPC manWithHorseMask = new NPC("man", 12, 1, 5);
+    NPC manWithHorseMask = new NPC("man", 12, 1, 6);
     NPC toad = new NPC("toad", 20, 20, 10);
     NPC fox = new NPC("fox", 10, 0, 0);
 
     public void createBook(){
 
-        cottonCandyLand.addChaptersToList(Arrays.asList(sweetopolisCityGateSouth, cityOutskirtSouth, cityOutskirtSouthEast, cityOutskirtSouthWest, cityOutskirtEast, willowTreeForest));
+        cottonCandyLand.addChaptersToList(Arrays.asList(sweetopolisCityGateSouth, cityOutskirtSouth, cityOutskirtSouthEast, cityOutskirtSouthWest, cityOutskirtEast, willowTreeForest, cityOutskirtNorth, cityOutskirtNorthEast, cityOutskirtNorthWest));
         questTracker.setCurrentLevel(cottonCandyLand);
         cottonCandyLand.levelMap = candyLandMap;
         cityOutskirtSouth.setMapReward(cottonCandyLand);
@@ -131,7 +132,21 @@ public class Book {
 
         cityOutskirtNorthWest.addStoryText("The flowers climper more intensely here, their sugary petals chiming melodiously in the gentle breeze.");
         cityOutskirtNorth.addStoryText("You can see a few guards in the distance, patrolling atop the city walls. A big tower spirals upwards from within the city center.");
-        cityOutskirtNorthEast.addStoryText("A giant ");
+
+        cityOutskirtNorthEast.addStoryText("A giant toad sits here in the sun, its eyes half-closed as if in peaceful meditation. It's skin is speckled with brightly saturated colorful spots resembling candy sprinkles.");
+        cityOutskirtNorthEast.addNPCsToChapter(new ArrayList<NPC>(Arrays.asList(toad)));
+        gameEventHandler.dialogueManager.addBasicDialogue(toad, new ArrayList<>(Arrays.asList(
+            "Ohh I can hear the tasty candy flowers from here...",
+            "Crrooaak do I yearn for the tasty candy flowers...",
+            "It is so nice in my sunny spot..."
+        )));
+
+        cityOutskirtNorthWest.addItem(candyflowers);
+        candyflowers.addItemDescription("They are dusted with a thin layer of glistening sugar coating.");
+        candyflowers.onGround = true;
+
+        toad.setKeyItems(new ArrayList<>(Arrays.asList(candyflowers)));
+        candyflowers.questItem = true;
 
         
     }

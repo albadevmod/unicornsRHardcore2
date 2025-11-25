@@ -42,11 +42,16 @@ public class Arena{
 
     public String takeDamage(Player player, NPC enemyNPC){
         int damage = calcEnemyDamage(enemyNPC);
-        player.health -= damage;
-        if (damage <= 6) {
-            return enemyNPC.npcName + " dealt " + damage + " damage to " + player.getPlayerName() + "!";
+        int armorValue = 0;
+        if (player.armor instanceof Armor) {
+            armorValue = ((Armor) player.armor).armorValue;
+        }
+        int reducedDamage = Math.max(0, damage - armorValue);
+        player.health -= reducedDamage;
+        if (reducedDamage <= 6) {
+            return enemyNPC.npcName + " dealt " + reducedDamage + " damage to " + player.getPlayerName() + "!";
         } else {
-            return enemyNPC.npcName + " landed a critical hit! " + damage + " damage dealt to " + player.getPlayerName() + "!";
+            return enemyNPC.npcName + " landed a critical hit! " + reducedDamage + " damage dealt to " + player.getPlayerName() + "!";
         }
     }
 
