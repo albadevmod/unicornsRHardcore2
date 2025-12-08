@@ -5,6 +5,7 @@ com\textadventure\GameEventHandler.class
 com\textadventure\Weapon.class
 com\textadventure\LevelMap.class
 com\textadventure\Game.class
+com\textadventure\Armor.class
 com\textadventure\GameController.class
 com\textadventure\QuestTracker.class
 com\textadventure\Quest.class
