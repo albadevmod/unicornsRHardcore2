@@ -17,7 +17,7 @@ http://localhost:8080/main.html
    docker compose up --build
    ```
    - This will build the Docker image and start the application.
-   - The app will be available on [http://localhost:8080](http://localhost:8080/main.html)
+   - The app will be available on [http://localhost:8080/main.html](http://localhost:8080/main.html)
 
 ## Manual Docker Build & Run
 1. **Build the Docker image:**
