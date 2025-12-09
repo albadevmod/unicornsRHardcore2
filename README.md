@@ -2,6 +2,8 @@
 
 This project is a Java-based text adventure game, packaged for easy setup and sharing using Docker and Docker Compose.
 
+http://localhost:8080/main.html
+
 ## Prerequisites
 - [Docker](https://www.docker.com/get-started) installed
 - [Docker Compose](https://docs.docker.com/compose/install/) (usually included with Docker Desktop)
